@@ -213,7 +213,7 @@ namespace SolucionFacturasLauncher
 
                     factura.RutaDescarga = JsonConfig.RutaDescarga;
 
-                    string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP + @"\IN\";
+                    string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP;
 
                     if (!Directory.Exists(RutaAccesoXMLEntradaERP))
                     {
@@ -345,7 +345,7 @@ namespace SolucionFacturasLauncher
                         fact.AppendChild(comentario);
                         doc.Save(RutaAccesoXMLEntradaERP + factura.Identificador + ".xml");
 
-                        //Actualizamos las variables del WF al estado "Pendiente Resultado EdasFirma"
+                        //Se avanza el WF al estado "Pendiente Respuesta Contabilización ERP"
                         var resultIdWF = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(factura.Identificador));
                         if (resultIdWF.Mensaje != "null")
                         {
@@ -384,7 +384,7 @@ namespace SolucionFacturasLauncher
                     //por cada una de las facturas que tenemos en Pendiente Resultado Contabilización ERP, recuperamos su sociedad para poder crear la ruta de salida
                     var respuestaMetadatos = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(facturaResultado.Identificador));
 
-                    string RutaAccesoSalidaERP = JsonConfig.XMLRutaEntradaERP + @"\OUT\";
+                    string RutaAccesoSalidaERP = JsonConfig.XMLRutaEntradaERP;
 
                     if (!Directory.Exists(RutaAccesoSalidaERP))
                     {
