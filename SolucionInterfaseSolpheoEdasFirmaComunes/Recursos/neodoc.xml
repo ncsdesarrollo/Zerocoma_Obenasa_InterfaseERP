@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Facturas xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="X:\desarrollo\Master\EdasFacturas\Plugins\ESQUEM~1\EdasFacturasRecepción.xsd">
+	<Factura Id="138" Accion="1">
+		<Tipo>Recibida</Tipo>
+		<Numero>140375</Numero>
+		<FechaEmision>
+			<Dia>14</Dia>
+			<Mes>10</Mes>
+			<Ano>2008</Ano>
+		</FechaEmision>
+		<Concepto>MARKETING</Concepto>
+		<FechaRecepcion>
+			<Dia>17</Dia>
+			<Mes>11</Mes>
+			<Ano>2008</Ano>
+		</FechaRecepcion>
+		<Total>110.2</Total>
+		<Entidad>
+			<Nombre>EjemploRecibidas</Nombre>
+			<Cif>A32177778</Cif>
+			<Correo>aaaa@ejemplo.com</Correo>
+			<Direccion>
+				<Calle>C/ MADRID, 54</Calle>
+				<Poblacion>MADRID</Poblacion>
+				<Provincia>MADRID</Provincia>
+				<CodPostal>28000</CodPostal>
+				<Pais>ESPAÑA</Pais>
+			</Direccion>
+		</Entidad>
+		<Impuestos>
+			<Impuesto>
+				<Nombre>IVA 18 %</Nombre>
+				<Tipo>18</Tipo>
+				<RecEq>4</RecEq>
+				<TipoOpe>OPERACIONES</TipoOpe>
+				<Base>95</Base>
+				<CuotaIva>15.2</CuotaIva>
+				<Recargo>12.3</Recargo>
+				<CuotaReq>2</CuotaReq>
+			</Impuesto>
+			<Impuesto>
+				<Nombre>IVA 5 %</Nombre>
+				<Tipo>5</Tipo>
+				<RecEq>5.4</RecEq>
+				<TipoOpe>OPERACIONES2</TipoOpe>
+				<Base>20</Base>
+				<CuotaIva>12.2</CuotaIva>
+				<Recargo>0</Recargo>
+				<CuotaReq>0</CuotaReq>
+			</Impuesto>
+		</Impuestos>
+		<Fichero>solpheoNCS_16300.pdf</Fichero>
+	</Factura>
+</Facturas>

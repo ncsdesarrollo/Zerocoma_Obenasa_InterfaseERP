@@ -1,0 +1,14 @@
+{
+	"SolpheoTenant": "solpheo",  
+	"TiempoEsperaEntreEjecucionEnMinutos": 5,
+	"SolpheoUrl": "https://solpheo.ncs-spain.com",
+	"SolpheoUsuario": "ammartinez@ncs-spain.com",
+	"SolpheoPassword": "NCS2020",
+	"IdMetadataSociedad": "2466",
+	"IdMetadataEstado": "2468",
+	"IdFileContainerFacturas": "351",
+	"SolpheoWorkflow": "97",
+	"IdSalidaPendienteEnvioAEdasFirma": "-4",
+	"IdSalidaPendienteRespuestaEdasFirma": "-7"
+}
+

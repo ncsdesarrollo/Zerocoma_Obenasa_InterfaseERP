@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "da294bfb-2a8f-485b-a660-ed5193b0e5f1",
+		"name": "ZerocomaSolucionFacturas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SendXML",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"XMLResultadoOCR\" : \"77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxGYWN0dXJhcyB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIiB4c2k6bm9OYW1lc3BhY2VTY2hlbWFMb2NhdGlvbj0iWDpcZGVzYXJyb2xsb1xNYXN0ZXJcRWRhc0ZhY3R1cmFzXFBsdWdpbnNcRVNRVUVNfjFcRWRhc0ZhY3R1cmFzUmVjZXBjacOzbi54c2QiPg0KCTxGYWN0dXJhIElkPSIxMzgiIEFjY2lvbj0iMSI+DQoJCTxUaXBvPlJlY2liaWRhPC9UaXBvPg0KCQk8TnVtZXJvPjE0MDM3NTwvTnVtZXJvPg0KCQk8RmVjaGFFbWlzaW9uPg0KCQkJPERpYT4xNDwvRGlhPg0KCQkJPE1lcz4xMDwvTWVzPg0KCQkJPEFubz4yMDA4PC9Bbm8+DQoJCTwvRmVjaGFFbWlzaW9uPg0KCQk8Q29uY2VwdG8+TUFSS0VUSU5HPC9Db25jZXB0bz4NCgkJPEZlY2hhUmVjZXBjaW9uPg0KCQkJPERpYT4xNzwvRGlhPg0KCQkJPE1lcz4xMTwvTWVzPg0KCQkJPEFubz4yMDA4PC9Bbm8+DQoJCTwvRmVjaGFSZWNlcGNpb24+DQoJCTxUb3RhbD4xMTAuMjwvVG90YWw+DQoJCTxFbnRpZGFkPg0KCQkJPE5vbWJyZT5FamVtcGxvUmVjaWJpZGFzPC9Ob21icmU+DQoJCQk8Q2lmPkEzMjE3Nzc3ODwvQ2lmPg0KCQkJPENvcnJlbz5hYWFhQGVqZW1wbG8uY29tPC9Db3JyZW8+DQoJCQk8RGlyZWNjaW9uPg0KCQkJCTxDYWxsZT5DLyBNQURSSUQsIDU0PC9DYWxsZT4NCgkJCQk8UG9ibGFjaW9uPk1BRFJJRDwvUG9ibGFjaW9uPg0KCQkJCTxQcm92aW5jaWE+TUFEUklEPC9Qcm92aW5jaWE+DQoJCQkJPENvZFBvc3RhbD4yODAwMDwvQ29kUG9zdGFsPg0KCQkJCTxQYWlzPkVTUEHDkUE8L1BhaXM+DQoJCQk8L0RpcmVjY2lvbj4NCgkJPC9FbnRpZGFkPg0KCQk8SW1wdWVzdG9zPg0KCQkJPEltcHVlc3RvPg0KCQkJCTxOb21icmU+SVZBIDE4ICU8L05vbWJyZT4NCgkJCQk8VGlwbz4xODwvVGlwbz4NCgkJCQk8UmVjRXE+NDwvUmVjRXE+DQoJCQkJPFRpcG9PcGU+T1BFUkFDSU9ORVM8L1RpcG9PcGU+DQoJCQkJPEJhc2U+OTU8L0Jhc2U+DQoJCQkJPEN1b3RhSXZhPjE1LjI8L0N1b3RhSXZhPg0KCQkJCTxSZWNhcmdvPjEyLjM8L1JlY2FyZ28+DQoJCQkJPEN1b3RhUmVxPjI8L0N1b3RhUmVxPg0KCQkJPC9JbXB1ZXN0bz4NCgkJCTxJbXB1ZXN0bz4NCgkJCQk8Tm9tYnJlPklWQSA1ICU8L05vbWJyZT4NCgkJCQk8VGlwbz41PC9UaXBvPg0KCQkJCTxSZWNFcT41LjQ8L1JlY0VxPg0KCQkJCTxUaXBvT3BlPk9QRVJBQ0lPTkVTMjwvVGlwb09wZT4NCgkJCQk8QmFzZT4yMDwvQmFzZT4NCgkJCQk8Q3VvdGFJdmE+MTIuMjwvQ3VvdGFJdmE+DQoJCQkJPFJlY2FyZ28+MDwvUmVjYXJnbz4NCgkJCQk8Q3VvdGFSZXE+MDwvQ3VvdGFSZXE+DQoJCQk8L0ltcHVlc3RvPg0KCQk8L0ltcHVlc3Rvcz4NCgkJPEZpY2hlcm8+U29scGhlb05DU18xNjM0My5wZGY8L0ZpY2hlcm8+DQoJPC9GYWN0dXJhPg0KPC9GYWN0dXJhcz4NCg==\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://zerocoma-solucionfacturas-pre.ncs-spain.com/eFacturas/SendXML/Hash/4c17ace5f92c79b411cdacddf3a42208",
+					"protocol": "https",
+					"host": [
+						"zerocoma-solucionfacturas-pre",
+						"ncs-spain",
+						"com"
+					],
+					"path": [
+						"eFacturas",
+						"SendXML",
+						"Hash",
+						"4c17ace5f92c79b411cdacddf3a42208"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFacturasSolpheo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://zerocoma-solucionfacturas-pre.ncs-spain.com/eFacturas/GetFacturasSolpheo/Hash/4c17ace5f92c79b411cdacddf3a42208/Tenant/SolpheoNCS",
+					"protocol": "https",
+					"host": [
+						"zerocoma-solucionfacturas-pre",
+						"ncs-spain",
+						"com"
+					],
+					"path": [
+						"eFacturas",
+						"GetFacturasSolpheo",
+						"Hash",
+						"4c17ace5f92c79b411cdacddf3a42208",
+						"Tenant",
+						"SolpheoNCS"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateEstadoFacturaSolpheo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://zerocoma-solucionfacturas-pre.ncs-spain.com/eFacturas/UpdateEstadoFacturaSolpheo/Hash/4c17ace5f92c79b411cdacddf3a42208/Tenant/SolpheoNCS/CodigoFactura/16300/LLamadaNeoDocOK/OK",
+					"protocol": "https",
+					"host": [
+						"zerocoma-solucionfacturas-pre",
+						"ncs-spain",
+						"com"
+					],
+					"path": [
+						"eFacturas",
+						"UpdateEstadoFacturaSolpheo",
+						"Hash",
+						"4c17ace5f92c79b411cdacddf3a42208",
+						"Tenant",
+						"SolpheoNCS",
+						"CodigoFactura",
+						"16300",
+						"LLamadaNeoDocOK",
+						"OK"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,165 @@
+{
+	"SolpheoIdTenant": "solpheo",  
+	"HashPeticionarioAPI": "4c17ace5f92c79b411cdacddf3a42208",  
+	"TiempoEsperaEntreEjecucionEnMinutos": 1,
+	"SolpheoAPIUrl": "https://solpheo.ncs-spain.com",
+	"SolucionFacturasAPIUrl": "http://localhost:44380/",
+	"SolpheoAPIUsuario": "aperezr@ncs-spain.com",
+	"SolpheoAPIPassword": "NCS2020",
+	"SolpheoIdFileContainerArchivadorFacturas": "331",
+	"SolpheoIdFileContainerRegistroDatosFacturas": "332",
+	"SolpheoIdFileContainerArchivadorFacturasIdMetadatoSociedad": "2244",
+	"SolpheoIdFileContainerArchivadorFacturasIdMetadatoEstado": "2246",
+	"SolpheoIdFileContainerArchivadorFacturasNameVariableEstado": "ZSF - Estado",
+	"SolpheoIdFileContainerRegistroDatosFacturasIdMetadatoCodigoFactura": "2265",
+	"SolpheoIdFileContainerRegistroDatosFacturasIdMetadatoSociedad": "2263",
+	"SolpheoIdWorkflow": "90",
+	"SolpheoIdWorkflowSalidaFinNeoDoc": "-5",
+	"SolpheoMapeoIdMetadatoTagsXMLDatosCabecera": [
+    {
+      "SolpheoIdMetadato": "2256",
+      "SolpheoNameVariable": "ZSF - CIF Proveedor",
+      "SolpheoTipoMetadato": "StringValue",
+      "XMLTagName": "CIF Proveedor",
+      "XMLTagXPath": "/Facturas/Factura/Entidad/Cif"
+    },
+    {
+      "SolpheoIdMetadato": "2255",
+      "SolpheoNameVariable": "ZSF - Número Factura",
+      "SolpheoTipoMetadato": "StringValue",
+      "XMLTagName": "Número Factura",
+      "XMLTagXPath": "/Facturas/Factura/Numero"
+    },
+    {
+      "SolpheoIdMetadato": "2247",
+      "SolpheoNameVariable": "ZSF - Fecha Emisión",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "Fecha Factura Dia",
+      "XMLTagXPath": "/Facturas/Factura/FechaEmision/Dia"
+    },
+    {
+      "SolpheoIdMetadato": "2247",
+      "SolpheoNameVariable": "ZSF - Fecha Emisión",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "Fecha Factura Mes",
+      "XMLTagXPath": "/Facturas/Factura/FechaEmision/Mes"
+    },
+    {
+      "SolpheoIdMetadato": "2247",
+      "SolpheoNameVariable": "ZSF - Fecha Emisión",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "Fecha Factura Año",
+      "XMLTagXPath": "/Facturas/Factura/FechaEmision/Ano"
+    },
+    {
+      "SolpheoIdMetadato": "2254",
+      "SolpheoNameVariable": "ZSF - Importe Total",
+      "SolpheoTipoMetadato": "DecimalValue",
+      "XMLTagName": "Importe Total",
+      "XMLTagXPath": "/Facturas/Factura/Total"
+    },
+    {
+      "SolpheoIdMetadato": "2252",
+      "SolpheoNameVariable": "ZSF - Libre Número",
+      "SolpheoTipoMetadato": "DecimalValue",
+      "XMLTagName": "LibreNumero",
+      "XMLTagXPath": "/Facturas/Factura/LibreNumero"
+    },
+    {
+      "SolpheoIdMetadato": "2253",
+      "SolpheoNameVariable": "ZSF - Libre Texto",
+      "SolpheoTipoMetadato": "StringValue",
+      "XMLTagName": "LibreTexto",
+      "XMLTagXPath": "/Facturas/Factura/LibreTexto"
+    },
+    {
+      "SolpheoIdMetadato": "2250",
+      "SolpheoNameVariable": "ZSF - Libre Fecha",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "LibreFecha Dia",
+      "XMLTagXPath": "/Facturas/Factura/LibreFecha/Dia"
+    },
+    {
+      "SolpheoIdMetadato": "2250",
+      "SolpheoNameVariable": "ZSF - Libre Fecha",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "LibreFecha Mes",
+      "XMLTagXPath": "/Facturas/Factura/LibreFecha/Mes"
+    },
+    {
+      "SolpheoIdMetadato": "2250",
+      "SolpheoNameVariable": "ZSF - Libre Fecha",
+      "SolpheoTipoMetadato": "DateTimeValue",
+      "XMLTagName": "LibreFecha Año",
+      "XMLTagXPath": "/Facturas/Factura/LibreFecha/Ano"
+    },
+    {
+      "SolpheoIdMetadato": "2251",
+      "SolpheoNameVariable": "ZSF - Libre Lista",
+      "SolpheoTipoMetadato": "StringValue",
+      "XMLTagName": "LibreLista",
+      "XMLTagXPath": "/Facturas/Factura/LibreLista"
+    }
+	],
+	"SolpheoMapeoIdMetadatoTagsXMLDatosFacturas": {
+		"XMLNodoPadreImpuestosXPath": "/Facturas/Factura/Impuestos",
+    "MapeoDatosImpuesto": [
+      {
+        "SolpheoIdMetadato": "2259",
+        "SolpheoTipoMetadato": "StringValue",
+        "XMLTagName": "Nombre",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/Nombre"
+      },
+      {
+        "SolpheoIdMetadato": "2257",
+        "SolpheoTipoMetadato": "DecimalValue",
+        "XMLTagName": "Base",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/Base"
+      },
+      {
+        "SolpheoIdMetadato": "2260",
+        "SolpheoTipoMetadato": "DecimalValue",
+        "XMLTagName": "Tipo",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/Tipo"
+      },
+      {
+        "SolpheoIdMetadato": "2258",
+        "SolpheoTipoMetadato": "DecimalValue",
+        "XMLTagName": "CuotaIva",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/CuotaIva"
+      },
+      {
+        "SolpheoIdMetadato": "2262",
+        "SolpheoTipoMetadato": "DecimalValue",
+        "XMLTagName": "RecEq",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/RecEq"
+      },
+      {
+        "SolpheoIdMetadato": "2261",
+        "SolpheoTipoMetadato": "DecimalValue",
+        "XMLTagName": "CuotaReq",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/CuotaReq"
+      },
+      {
+        "SolpheoIdMetadato": "2264",
+        "SolpheoTipoMetadato": "StringValue",
+        "XMLTagName": "TipoOpe",
+        "XMLTagXPath": "/Facturas/Factura/Impuestos/Impuesto/TipoOpe"
+      }
+    ]						
+	},
+	"NeoDocAPIUrl": "https://cloud.neodoc.es/api/v2/robot_documents",
+	"NeoDocMapeoRobotsTokens": [
+		{
+			"SociedadSolpheo": "1",
+			"UUIDRobotAsociado": "e4779670-9b91-4477-ad71-6e82e69b81f0",
+			"TokenLoginRobotAsociado": "Peaj1Mgn_AjTEGXHRDff"
+		},
+		{
+			"SociedadSolpheo": "99",
+			"UUIDRobotAsociado": "RobotEjemplo",
+			"TokenLoginRobotAsociado": "PorArribaPorAbajoCalentitoBienPegado"
+		}
+	]
+}
+
