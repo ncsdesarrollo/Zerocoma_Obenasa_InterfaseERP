@@ -38,7 +38,7 @@ namespace SolucionFacturasComunes
         /// <param name="type">Type client id (roclient)</param>
         /// <param name="secret">Secret client (secret)</param>
         /// <returns>Login information</returns>
-        public async Task<Login> LoginAsync(string user, string pass, string tenant, string type, string secret)
+        public async Task<Login> LoginAsync(string user, string pass, string tenant, string client_id, string client_secret, string scope)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -51,9 +51,9 @@ namespace SolucionFacturasComunes
                 parameters.Add("username", user);
                 parameters.Add("password", pass);
                 parameters.Add("grant_type", "password");
-                parameters.Add("client_id", "wsclient");
-                parameters.Add("scope", "api read write");
-                parameters.Add("client_secret", "WSsecret");
+                parameters.Add("client_id", client_id);
+                parameters.Add("scope", scope);
+                parameters.Add("client_secret", client_secret);
                 parameters.Add("acr_values", "tenant:" + tenant);
 
                 var responseClient = await client.PostAsync(Constants.URLTOKEN, new FormUrlEncodedContent(parameters));

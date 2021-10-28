@@ -142,7 +142,7 @@ namespace SolucionFacturasLauncher
             {
                 // Nos logamos en Solpheo con los datos obtenidos del json de configuracion
                 var clienteSolpheo = new ClienteSolpheo(JsonConfig.SolpheoUrl);
-                var loginSolpheo = await clienteSolpheo.LoginAsync(JsonConfig.SolpheoUsuario, JsonConfig.SolpheoPassword, JsonConfig.SolpheoTenant, "", "");
+                var loginSolpheo = await clienteSolpheo.LoginAsync(JsonConfig.SolpheoUsuario, JsonConfig.SolpheoPassword, JsonConfig.SolpheoTenant, "multifuncional", "MfpSecret", "api");
 
                 // Nos traemos las facturas del archivador Facturas con estado "Pendiente enviar a ERP"
                 string jsonFiltrado = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Estado','description':'Estado','id': " + int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':'Pendiente enviar a ERP','type':0}}]";

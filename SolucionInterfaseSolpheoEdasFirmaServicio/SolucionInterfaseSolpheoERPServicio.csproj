@@ -49,10 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>089D776B8E8D729CCDF934FE1792CF63AA684B54</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>137EA5A91A46B46C771A0B11B3B153CEA5D16F5A</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SolucionInterfaseSolpheoEdasFirmaServicio_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SolucionInterfaseSolpheoERPServicio_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -115,7 +115,7 @@
     <None Include="Recursos\_InstaladorServicioWindows\Desinstalador.bat" />
     <None Include="Recursos\_InstaladorServicioWindows\Instalador.bat" />
     <None Include="Recursos\_InstaladorServicioWindows\Instalador.ps1" />
-    <None Include="SolucionInterfaseSolpheoERPServicio_1_TemporaryKey.pfx" />
+    <None Include="SolucionInterfaseSolpheoERPServicio_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">

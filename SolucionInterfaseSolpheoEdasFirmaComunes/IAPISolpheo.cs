@@ -16,7 +16,7 @@ namespace SolucionFacturasComunes
         /// <param name="type">Type client id (roclient)</param>
         /// <param name="secret">Secret client (secret)</param>
         /// <returns>Login information</returns>
-        Task<Login> LoginAsync(string user, string pass, string tenant, string type, string secret);
+        Task<Login> LoginAsync(string user, string pass, string tenant, string client_id, string client_secret, string scope);
 
         /// <summary>
         /// Revocation token user
