@@ -165,7 +165,7 @@ namespace SolucionFacturasLauncher
 
                     idMetadatoArchivadorCodigoFactura = int.Parse(JsonConfig.IdMetadataArchivadorFacturasCodigoFactura);
                     factura.Codigofactura = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorCodigoFactura).FirstOrDefault().StringValue;
-                    factura.Codigofactura = "16592";
+                    //factura.Codigofactura = "16592";
 
                     //Nos traemos los datos del registros DatosFactura de cada una de las facturas obtenidas anteriormente
                     string jsonFiltradoRegistro = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Código_Factura','description':'Código_Factura','id': " + int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasCodigoFactura) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':" + factura.Codigofactura + ",'type':0}}]";
@@ -213,7 +213,7 @@ namespace SolucionFacturasLauncher
 
                     factura.RutaDescarga = JsonConfig.RutaDescarga;
 
-                    string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP + factura.Sociedad + @"\IN\";
+                    string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP + @"\IN\";
 
                     if (!Directory.Exists(RutaAccesoXMLEntradaERP))
                     {
@@ -384,10 +384,7 @@ namespace SolucionFacturasLauncher
                     //por cada una de las facturas que tenemos en Pendiente Resultado Contabilización ERP, recuperamos su sociedad para poder crear la ruta de salida
                     var respuestaMetadatos = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(facturaResultado.Identificador));
 
-                    idMetadatoArchivadorSociedad = int.Parse(JsonConfig.IdMetadataArchivadorFacturasSociedad);
-                    facturaResultado.Sociedad = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorSociedad).FirstOrDefault().StringValue;
-
-                    string RutaAccesoSalidaERP = JsonConfig.XMLRutaEntradaERP + facturaResultado.Sociedad + @"\OUT\";
+                    string RutaAccesoSalidaERP = JsonConfig.XMLRutaEntradaERP + @"\OUT\";
 
                     if (!Directory.Exists(RutaAccesoSalidaERP))
                     {
