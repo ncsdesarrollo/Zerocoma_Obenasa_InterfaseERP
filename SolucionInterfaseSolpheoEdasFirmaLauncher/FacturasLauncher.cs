@@ -137,6 +137,7 @@ namespace SolucionFacturasLauncher
             int idMetadatoRegistroCuotaIVA = 0;
             int idMetadatoRegistroRecEq = 0;
             int idMetadatoRegistroCuotaReq = 0;
+            int idMetadatoArchivadorConcepto = 0;
 
             try
             {
@@ -211,6 +212,9 @@ namespace SolucionFacturasLauncher
                     idMetadatoArchivadorTipoFactura = int.Parse(JsonConfig.IdMetadataArchivadorFacturasTipoFactura);
                     factura.TipoFactura = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorTipoFactura).FirstOrDefault().StringValue;
 
+                    idMetadatoArchivadorConcepto = int.Parse(JsonConfig.IdMetadataArchivadorFacturasConcepto);
+                    factura.Concepto = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorConcepto).FirstOrDefault().StringValue;
+
                     factura.RutaDescarga = JsonConfig.RutaDescarga;
 
                     string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP;
@@ -271,6 +275,14 @@ namespace SolucionFacturasLauncher
                         XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura);
                         totfact.AppendChild(totfactTexto);
                         fact.AppendChild(totfact);
+                        XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
+                        XmlText conceptotexto = doc.CreateTextNode(factura.Concepto);
+                        concepto.AppendChild(conceptotexto);
+                        fact.AppendChild(concepto);
+                        XmlElement fichero = doc.CreateElement(string.Empty, "Fichero", string.Empty);
+                        XmlText fichTexto = doc.CreateTextNode(factura.Identificador);
+                        fichero.AppendChild(fichTexto);
+                        fact.AppendChild(fichero);
                         XmlElement Entidad = doc.CreateElement(string.Empty, "Entidad", string.Empty);
                         fact.AppendChild(Entidad);
                         XmlElement CifEntidad = doc.CreateElement(string.Empty, "Cif", string.Empty);
@@ -317,10 +329,7 @@ namespace SolucionFacturasLauncher
                             Impuesto.AppendChild(CuotaReq);
                         }
 
-                        XmlElement fichero = doc.CreateElement(string.Empty, "Fichero", string.Empty);
-                        XmlText fichTexto = doc.CreateTextNode(factura.Identificador);
-                        fichero.AppendChild(fichTexto);
-                        fact.AppendChild(fichero);
+                        
                         XmlElement LibreNumero = doc.CreateElement(string.Empty, "LibreNumero", string.Empty);
                         fact.AppendChild(LibreNumero);
                         XmlElement LibreTexto = doc.CreateElement(string.Empty, "LibreTexto", string.Empty);
@@ -359,8 +368,181 @@ namespace SolucionFacturasLauncher
                     Facturas.Add(factura);
                 }
 
-                //Comprobamos las facturas que se encuentran en estado = "Pendiente Resultado Contabilización ERP"
-                string jsonFiltradoResultado = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Estado','description':'Estado','id': " + int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':'Pendiente Respuesta ERP','type':0}}]";
+                //Recuperamos todos los XML de la carpeta de salida
+                string RutaAccesoSalidaERP = JsonConfig.XMLRutaEntradaERP;
+                string IdentificadorRespuesta = "";
+                if (!Directory.Exists(RutaAccesoSalidaERP))
+                {
+                    log.Error("GetFacturasSolpheo - Ruta Acceso Salida ERP " + RutaAccesoSalidaERP + " no existe");
+                }
+                else
+                {
+                    string[] allfiles = Directory.GetFiles(RutaAccesoSalidaERP, "*.XML", SearchOption.AllDirectories);
+                    foreach (var file in allfiles)
+                    {
+                        FileInfo info = new FileInfo(file);
+                        IdentificadorRespuesta = info.Name.Substring(0, info.Name.Length - 4);
+                        var documentoObtenido = await clienteSolpheo.FileItemsByIdAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
+                        if (documentoObtenido.Id > 0)
+                        {
+                            string Comentario = "";
+                            string LibreFechaDia = "";
+                            string LibreFechaMes = "";
+                            string LibreFechaAno = "";
+                            string LibreLista = "";
+                            var filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                            if (File.Exists(filenameSalida))
+                            {
+                                XmlDocument xDoc = new XmlDocument();
+                                xDoc.Load(filenameSalida);
+
+                                XmlNodeList elemList = xDoc.GetElementsByTagName("Fichero");
+                                for (int a = 0; a < elemList.Count; a++)
+                                {
+                                    if (elemList[a].InnerXml == IdentificadorRespuesta)
+                                    {
+                                        XmlNodeList elemListComentario = xDoc.GetElementsByTagName("Comentarios");
+                                        Comentario = elemListComentario[a].InnerText;
+                                        XmlNodeList elemListLibreFechaDia = xDoc.GetElementsByTagName("LibreFecha");
+                                        LibreFechaDia = elemListLibreFechaDia[a].ChildNodes[0].InnerText;
+                                        LibreFechaMes = elemListLibreFechaDia[a].ChildNodes[1].InnerText;
+                                        LibreFechaAno = elemListLibreFechaDia[a].ChildNodes[2].InnerText;
+                                        XmlNodeList elemListLibreLista = xDoc.GetElementsByTagName("LibreLista");
+                                        LibreLista = elemListLibreLista[a].InnerText;
+                                    }
+                                }
+                                if (Comentario.ToUpper() == "RECHAZADA")
+                                {
+                                    //Actualizamos las variables del WF al estado "Rechazada"
+                                    var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
+                                    var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoRechazada, int.Parse(resultIdWFSalida.Mensaje));
+                                    if (!avancesalida.Resultado)
+                                    {
+                                        //si da error se informa en el log y se mueve el XML a una subcarpeta KO
+                                        log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Rechazada para el IdFileItem " + IdentificadorRespuesta);
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                    else
+                                    {
+                                        //si ha ido bien, se mueve el XML a una subcarpeta OK
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                }
+                                else if (Comentario.ToUpper() == "ACEPTADA")
+                                {
+                                    //grabamos la fecha contable y libre lista en sus metadatos
+                                    var resultIdWFCambioMetadatos = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
+                                    string FechaContable = "";
+                                    int variableSalidaResultado = 0;
+                                    int variableSalidaLLResultado = 0;
+                                    if (LibreFechaDia != "")
+                                    {
+                                        FechaContable = LibreFechaDia + "/" + LibreFechaMes + "/" + LibreFechaAno;
+                                        var variableSalida = await clienteSolpheo.ActualizarMetadato(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasFechaRegistroContable), "Fecha Registro Contable", "DateTimeValue", FechaContable);
+                                        variableSalidaResultado = variableSalida.Id;
+                                    }
+                                    if (LibreLista != "")
+                                    {
+                                        var variableSalidaLL = await clienteSolpheo.ActualizarMetadato(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasLibreLista), "Libre Lista", "StringValue", LibreLista);
+                                        variableSalidaLLResultado = variableSalidaLL.Id;
+                                    }
+                                    //si da error, mostrar mensaje y mover XML
+                                    if (variableSalidaResultado >= 0 || variableSalidaLLResultado >= 0)
+                                    {
+                                        log.Error("Avanzar Workflow - Error al actualizar la fecharegistrocontable o número de asiento tras recibir XML con resultado contabilización del ERP con idfileitem " + IdentificadorRespuesta);
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                    //Avanzamos el WF al estado = aceptada
+                                    var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
+                                    var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoAceptada, int.Parse(resultIdWFSalida.Mensaje));
+                                    if (!avancesalida.Resultado)
+                                    {
+                                        //si da error se informa en el log y se mueve el XML a una subcarpeta KO
+                                        log.Error("Avanzar Workflow - Error al avanzar Workflow tras recibir XML con resultado contabilización del ERP para el IdFileItem " + IdentificadorRespuesta);
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                    else
+                                    {
+                                        //si ha ido bien, se mueve el XML a una subcarpeta OK
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                }
+                                else if (Comentario.ToUpper() == "PAGADA")
+                                {
+                                    //Actualizamos las variables del WF al estado "Pagada"
+                                    var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
+                                    var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada, int.Parse(resultIdWFSalida.Mensaje));
+                                    if (!avancesalida.Resultado)
+                                    {
+                                        //si da error se informa en el log y se mueve el XML a una subcarpeta KO
+                                        log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Pagada para el IdFileItem " + IdentificadorRespuesta);
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\PAGO_PROCESADO_KO\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                    else
+                                    {
+                                        //si ha ido bien, se mueve el XML a una subcarpeta OK
+                                        string path = filenameSalida;
+                                        string directoriosalidacopiado = RutaAccesoSalidaERP + @"\PAGO_PROCESADO_OK\";
+                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        if (!Directory.Exists(directoriosalidacopiado))
+                                        {
+                                            Directory.CreateDirectory(directoriosalidacopiado);
+                                        }
+                                        File.Move(path, ficherosalidacopiado);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            log.Error("Obtener XML Salida - El XML de SalidaRuta Acceso Salida ERP " + RutaAccesoSalidaERP + " no existe");
+                        }
+                    }
+                }
+
+                /*string jsonFiltradoResultado = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Estado','description':'Estado','id': " + int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':'Pendiente Respuesta ERP','type':0}}]";
                 var documentosPendientesResultado = await clienteSolpheo.FileItemsAdvancednested(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), jsonFiltradoResultado);
 
                 List<FileContainerListViewModel> FileItemsResultado = documentosPendientesResultado.Items.ToList();
@@ -583,8 +765,10 @@ namespace SolucionFacturasLauncher
                                 }
                             }
                         }
+                        
                     }
-                }
+                    
+                }*/
 
                 //Carga de codigos de obra en el portal de proveedores
                 response = await FicheroCSV_CodigoObra(JsonConfig);

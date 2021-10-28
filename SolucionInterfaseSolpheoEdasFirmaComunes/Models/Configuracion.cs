@@ -57,6 +57,9 @@ namespace SolucionFacturasComunes.Models
 
         public string IdMetadataArchivadorFacturasTipoFactura { get; set; }
 
+        public string IdMetadataArchivadorFacturasConcepto { get; set; }
+        
+
         public string IdMetadataArchivadorFacturasFechaRegistroContable { get; set; }
 
         public string IdMetadataArchivadorFacturasNumeroAsientoContable { get; set; }
@@ -175,6 +178,8 @@ namespace SolucionFacturasComunes.Models
         public string RecEq { get; set; }
 
         public string CuotaReq { get; set; }
+
+        public string Concepto { get; set; }
 
         public byte[] FacturaFile { get; set; }
     }

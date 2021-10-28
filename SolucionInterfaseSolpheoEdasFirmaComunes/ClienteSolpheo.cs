@@ -169,6 +169,32 @@ namespace SolucionFacturasComunes
             }
         }
 
+        public async Task<FileContainerListViewModel> FileItemsByIdAsync(string token, int idFilecontainer, int idFileItem)
+        {
+            FileContainerListViewModel fileitem = null;
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this._urlTenant + "/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+
+
+                var responseClient = await client.GetAsync($"{Constants.URLFILEITEMS}/{idFilecontainer}/{idFileItem}");
+                if (responseClient.IsSuccessStatusCode)
+                {
+                    string data = await responseClient.Content.ReadAsStringAsync();
+                    fileitem = JsonConvert.DeserializeObject<FileContainerListViewModel>(data);
+                }
+            }
+
+
+
+            return fileitem;
+        }
+
         public async Task<PagedList<FileContainerListViewModel>> BuscarPorIfFileItem(string token, int idFilecontainer, int idFileItem)
         {
             PagedList<FileContainerListViewModel> fileitems = null;
