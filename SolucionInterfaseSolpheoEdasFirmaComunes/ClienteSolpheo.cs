@@ -793,6 +793,61 @@ namespace SolucionFacturasComunes
             return IdDocument;
         }
 
+        public async Task<ResultId> ActualizarMetadato(string token, int idFileContainer, int idFileItem, int idMetadata, string variableName, string variableType, string variableValue)
+        {
+            ResultId metadatasFileContainer = null;
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this._urlTenant + "/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var valorTipo = 0;
+                var tipo = String.Empty;
+
+                switch (variableType)
+                {
+                    case "StringValue":
+                        valorTipo = 1;
+                        tipo = "stringValue";
+                        break;
+                    case "IntValue":
+                        valorTipo = 2;
+                        tipo = "intValue";
+                        break;
+                    case "DecimalValue":
+                        valorTipo = 3;
+                        tipo = "decimalValue";
+                        break;
+                    case "DateTimeValue":
+                        valorTipo = 4;
+                        tipo = "dateTimeValue";
+                        break;
+                    case "ValueBit":
+                        valorTipo = 5;
+                        tipo = "valueBit";
+                        break;
+                }
+
+                string json = "{\'idMetadata\':" + idMetadata +
+                           ",\'idFileItem\':" + idFileItem + ",\'name\':\'" + variableName + "\',\'idType\': " + valorTipo + ",\'" + tipo + "\':\'" + variableValue +
+                           "\',\'name\':\'" + variableName + "\',\'idMetadataFileContainer\':" + idMetadata +
+                           ",\'value\':\'" + variableValue + "\',\'type\':" + valorTipo + "}";
+
+                var responseClient = await client.PutAsync($"{this._urlTenant + "/"}" + "api/filecontainersmetadatasvalues/" + idFileContainer + "/" + idFileItem + "/" + idMetadata, new StringContent(json, Encoding.UTF8, "application/json"));
+                string data = await responseClient.Content.ReadAsStringAsync();
+
+                if (responseClient.IsSuccessStatusCode)
+                {
+                    metadatasFileContainer = JsonConvert.DeserializeObject<ResultId>(data);
+                }
+            }
+
+            return metadatasFileContainer;
+        }
+
         public async Task<ResultadoSolpheo> GetIdWorkFlowAsync(string token, int idFileItem)
         {
             ResultadoSolpheo SolpheoResult = new ResultadoSolpheo();
@@ -838,8 +893,6 @@ namespace SolucionFacturasComunes
                 using (var content = new MultipartFormDataContent("----WebKitFormBoundary6BZNEYMSjcR5iiZw"))
                 {
                     content.Add(new StreamContent(new MemoryStream(file)), "file", nameFile);
-                    //File.WriteAllBytes(@"c:\temp\aaa.pdf", file);
-                    //content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
                     var responseClient = await client.PostAsync($"{this._urlTenant}{"api/fileitems/replace/workflow/"}{idFileItem}", content);
 
                     string data = await responseClient.Content.ReadAsStringAsync();
