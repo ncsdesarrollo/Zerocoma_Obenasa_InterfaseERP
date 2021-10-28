@@ -423,6 +423,7 @@ namespace SolucionFacturasLauncher
                                 var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(facturaResultado.Identificador), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoRechazada, int.Parse(resultIdWFSalida.Mensaje));
                                 if (!avancesalida.Resultado)
                                 {
+                                    //si da error se informa en el log y se mueve el XML a una subcarpeta KO
                                     log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Rechazada para el IdFileItem " + facturaResultado.Identificador);
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
@@ -435,6 +436,7 @@ namespace SolucionFacturasLauncher
                                 }
                                 else
                                 {
+                                    //si ha ido bien, se mueve el XML a una subcarpeta OK
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
                                     string ficherosalidacopiado = directoriosalidacopiado + facturaResultado.Identificador + ".XML";
@@ -447,6 +449,7 @@ namespace SolucionFacturasLauncher
                             }
                             else if (Comentario.ToUpper() == "ACEPTADA")
                             {
+                                //grabamos la fecha contable y libre lista en sus metadatos
                                 var resultIdWFCambioMetadatos = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(facturaResultado.Identificador));
                                 string FechaContable = "";
                                 bool variableSalidaResultado = true;
@@ -475,11 +478,12 @@ namespace SolucionFacturasLauncher
                                     }
                                     File.Move(path, ficherosalidacopiado);
                                 }
-
+                                //Avanzamos el WF al estado = aceptada
                                 var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(facturaResultado.Identificador));
                                 var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(facturaResultado.Identificador), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoAceptada, int.Parse(resultIdWFSalida.Mensaje));
                                 if (!avancesalida.Resultado)
                                 {
+                                    //si da error se informa en el log y se mueve el XML a una subcarpeta KO
                                     log.Error("Avanzar Workflow - Error al avanzar Workflow tras recibir XML con resultado contabilización del ERP para el IdFileItem " + facturaResultado.Identificador);
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
@@ -492,6 +496,7 @@ namespace SolucionFacturasLauncher
                                 }
                                 else
                                 {
+                                    //si ha ido bien, se mueve el XML a una subcarpeta OK
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
                                     string ficherosalidacopiado = directoriosalidacopiado + facturaResultado.Identificador + ".XML";
@@ -513,7 +518,6 @@ namespace SolucionFacturasLauncher
                 List<FileContainerListViewModel> FileItemsPendientePago = documentosPendientesPago.Items.ToList();
 
                 var FacturasPendientePago = new List<Factura>();
-                bool EncontradoPendiente = false;
 
                 for (int z = 0; z < FileItemsPendientePago.Count; z++)
                 {
@@ -521,7 +525,6 @@ namespace SolucionFacturasLauncher
 
                     facturaPendientePago.Identificador = FileItemsPendientePago[z].Id.ToString();
 
-                    EncontradoPendiente = true;
                     string Comentario = "";
                     //por cada una de las facturas que tenemos en Aceptada, recuperamos su sociedad para poder crear la ruta de salida
                     var respuestaMetadatos = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(facturaPendientePago.Identificador));
@@ -558,6 +561,7 @@ namespace SolucionFacturasLauncher
                                 var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(facturaPendientePago.Identificador), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada, int.Parse(resultIdWFSalida.Mensaje));
                                 if (!avancesalida.Resultado)
                                 {
+                                    //si da error se informa en el log y se mueve el XML a una subcarpeta KO
                                     log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Pagada para el IdFileItem " + facturaPendientePago.Identificador);
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\PAGO_PROCESADO_KO\";
@@ -570,6 +574,7 @@ namespace SolucionFacturasLauncher
                                 }
                                 else
                                 {
+                                    //si ha ido bien, se mueve el XML a una subcarpeta OK
                                     string path = filenameSalida;
                                     string directoriosalidacopiado = RutaAccesoSalidaERP + @"\PAGO_PROCESADO_OK\";
                                     string ficherosalidacopiado = directoriosalidacopiado + facturaPendientePago.Identificador + ".XML";
@@ -585,10 +590,10 @@ namespace SolucionFacturasLauncher
                 }
 
                 //Carga de codigos de obra en el portal de proveedores
-                //response = await FicheroCSV_CodigoObra(JsonConfig);
+                response = await FicheroCSV_CodigoObra(JsonConfig);
 
                 //Carga de proveedores en el portal de proveedores
-                //response = await FicheroCSV_Proveedores(JsonConfig);
+                response = await FicheroCSV_Proveedores(JsonConfig);
 
                 var ListadoFacturas = new ListadoFacturas();
                 ListadoFacturas.Facturas = Facturas;
