@@ -22,10 +22,9 @@ namespace SolucionFacturasServicio
             if (args.Length > 0)
                 Tenant = args[0];
             Tenant = "solpheo";
-            if (ConfigurationManager.AppSettings["ModoDepuracion"].ToString() == "1") {
                 FacturasLauncher launcher = new FacturasLauncher();
                 launcher.Start(Tenant);
-            }
+            
 
         }
 

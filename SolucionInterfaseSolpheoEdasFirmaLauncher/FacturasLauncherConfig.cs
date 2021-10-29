@@ -18,7 +18,7 @@ namespace SolucionFacturasLauncher
         {
             string data = File.ReadAllText(ConfigurationManager.AppSettings["RutaJSONConfiguracion"] + @"\" + tenant + ".json"); // el nombre del json es el del tenant recibido por parámetro, por ejemplo solpheo.json
             Configuracion = JsonConvert.DeserializeObject<Configuracion>(data);
-            LogTenant = ConfigurationManager.AppSettings["RutaLogs"] + @"\" + tenant + @"\" + tenant + ".log";         
+            LogTenant = ConfigurationManager.AppSettings["RutaLogs"] + @"\" + tenant + ".log";         
         }
 
         private string GetFromConfig(string key, string defaultValue)
