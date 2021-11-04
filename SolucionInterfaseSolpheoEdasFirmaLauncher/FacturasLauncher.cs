@@ -132,6 +132,7 @@ namespace SolucionFacturasLauncher
             int idMetadatoArchivadorLibreFecha = 0;
             int idMetadatoArchivadorLibreLista = 0;
             int idMetadatoArchivadorTipoFactura = 0;
+            int idMetadatoArchivadorEstado = 0;
             int idMetadatoRegistroBase = 0;
             int idMetadatoRegistroTipo = 0;
             int idMetadatoRegistroCuotaIVA = 0;
@@ -380,6 +381,7 @@ namespace SolucionFacturasLauncher
                 //Recuperamos todos los XML de la carpeta de salida
                 string RutaAccesoSalidaERP = JsonConfig.XMLRutaSalidaERP;
                 string IdentificadorRespuesta = "";
+                string Estado = "";
                 if (!Directory.Exists(RutaAccesoSalidaERP))
                 {
                     log.Error("GetFacturasSolpheo - Ruta Acceso Salida ERP " + RutaAccesoSalidaERP + " no existe");
@@ -391,8 +393,10 @@ namespace SolucionFacturasLauncher
                     {
                         FileInfo info = new FileInfo(file);
                         IdentificadorRespuesta = info.Name.Substring(0, info.Name.Length - 4);
-                        var documentoObtenido = await clienteSolpheo.FileItemsByIdAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
-                        if (documentoObtenido.State == 8)
+                        var respuestaMetadatosEstado = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
+                        idMetadatoArchivadorEstado = int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado);
+                        Estado = respuestaMetadatosEstado.Items.Where(m => m.IdMetadata == idMetadatoArchivadorEstado).FirstOrDefault().StringValue;
+                        if (Estado == "Pendiente Respuesta ERP")
                         {
                             string Comentario = "";
                             string LibreFechaDia = "";
@@ -463,6 +467,7 @@ namespace SolucionFacturasLauncher
                                     }
                                     else
                                     {
+                                        string FechaContable = "";
                                         var metadatas = new List<FileContainerMetadataValue>();
 
                                         var metadata = new FileContainerMetadataValue();
@@ -470,15 +475,23 @@ namespace SolucionFacturasLauncher
                                         metadata.IdMetadata = int.Parse(JsonConfig.IdMetadataArchivadorFacturasLibreLista);
                                         metadata.StringValue = LibreLista;
                                         metadatas.Add(metadata);
-                                        metadata.IdFileItem = int.Parse(IdentificadorRespuesta);
-                                        metadata.IdMetadata = int.Parse(JsonConfig.IdMetadataArchivadorFacturasFechaRegistroContable);
-                                        string FechaContable = LibreFechaDia + "/" + LibreFechaMes + "/" + LibreFechaAno;
-                                        metadata.StringValue = FechaContable;
-                                        metadatas.Add(metadata);
-
+                                        //Actualizamos el metadato Libre Lista
                                         var result = await clienteSolpheo.UpdateMetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), metadatas.ToArray());
 
-                                        if (result.Resultado)
+                                        var metadatas2 = new List<FileContainerMetadataValue>();
+                                        var metadata2 = new FileContainerMetadataValue();
+                                        metadata2.IdFileItem = int.Parse(IdentificadorRespuesta);
+                                        metadata2.IdMetadata = int.Parse(JsonConfig.IdMetadataArchivadorFacturasFechaRegistroContable);
+                                        
+                                        if (LibreFechaDia != "")
+                                            FechaContable = LibreFechaDia + "/" + LibreFechaMes + "/" + LibreFechaAno;
+
+                                        metadata2.DateTimeValue = DateTime.Parse(FechaContable);
+                                        metadatas2.Add(metadata2);
+                                        //Actualizamos el metadato Fecha Contable
+                                        var result2 = await clienteSolpheo.UpdateMetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), metadatas2.ToArray());
+
+                                        if (result.Resultado && result2.Resultado)
                                         {
                                             var idWFActivity = int.Parse(resultIdWorkflow.Mensaje);
                                             var variableUpdatedLista = await clienteSolpheo.UpdateVariablesWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasLibreLista), "Libre Lista", "StringValue", LibreLista, idWFActivity);
@@ -487,12 +500,17 @@ namespace SolucionFacturasLauncher
                                             {
                                                 log.Error("Modificar variable solpheo - No se ha podido modificar la variable de Solpheo LibreLista para el idfileitem " + IdentificadorRespuesta);
                                             }
-                                            var variableUpdatedFecha = await clienteSolpheo.UpdateVariablesWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasFechaRegistroContable), "Fecha Registro Contable", "DateTimeValue", FechaContable, idWFActivity);
-                                            variableSalidaFechaResultado = variableUpdatedFecha.Resultado;
-                                            if (!variableUpdatedFecha.Resultado)
+                                            if (FechaContable != "")
                                             {
-                                                log.Error("Modificar variable solpheo - No se ha podido modificar la variable de Solpheo FechaRegistroContable para el idfileitem " + IdentificadorRespuesta);
+                                                var variableUpdatedFecha = await clienteSolpheo.UpdateVariablesWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasFechaRegistroContable), "Fecha Registro Contable", "DateTimeValue", FechaContable, idWFActivity);
+                                                variableSalidaFechaResultado = variableUpdatedFecha.Resultado;
+                                                if (!variableUpdatedFecha.Resultado)
+                                                {
+                                                    log.Error("Modificar variable solpheo - No se ha podido modificar la variable de Solpheo FechaRegistroContable para el idfileitem " + IdentificadorRespuesta);
+                                                }
                                             }
+                                            else
+                                                variableSalidaFechaResultado = true;
                                         }
                                     }
                                     //si da error, mostrar mensaje y mover XML
