@@ -591,6 +591,16 @@ namespace SolucionFacturasLauncher
                         else
                         {
                             log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se encuentra en estado Pendiente Respuesta ERP");
+                            //si el XML de salida no se encuentra en estado Pendiente Respuesta ERP, se mueve en la subcarpeta XML_FORMATO_INCORRECTO
+                            var filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                            string path = filenameSalida;
+                            string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
+                            string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                            if (!Directory.Exists(directoriosalidacopiado))
+                            {
+                                Directory.CreateDirectory(directoriosalidacopiado);
+                            }
+                            File.Move(path, ficherosalidacopiado);
                         }
                     }
                 }
