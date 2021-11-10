@@ -267,7 +267,7 @@ namespace SolucionFacturasLauncher
                         XmlText AnoFE = doc.CreateTextNode(factura.FechaEmision.Year.ToString());
                         FechaEmisionAno.AppendChild(AnoFE);
                         FechaEmision.AppendChild(FechaEmisionAno);
-                        XmlElement FechaRecepcion = doc.CreateElement(string.Empty, "FechaRecpecion", string.Empty);
+                        XmlElement FechaRecepcion = doc.CreateElement(string.Empty, "FechaRecepcion", string.Empty);
                         fact.AppendChild(FechaRecepcion);
                         XmlElement FechaRecepcionDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
                         XmlText DiaFR = doc.CreateTextNode(factura.FechaRecepcion.Day.ToString());
