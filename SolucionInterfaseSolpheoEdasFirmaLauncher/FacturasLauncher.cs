@@ -402,7 +402,7 @@ namespace SolucionFacturasLauncher
                             var respuestaMetadatosEstado = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
                             idMetadatoArchivadorEstado = int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado);
                             Estado = respuestaMetadatosEstado.Items.Where(m => m.IdMetadata == idMetadatoArchivadorEstado).FirstOrDefault().StringValue;
-                            if (Estado == "Pendiente Respuesta ERP")
+                            if (Estado == "Pendiente Respuesta ERP" || Estado == "Aceptada")
                             {
                                 string Comentario = "";
                                 string LibreFechaDia = "";
@@ -614,7 +614,7 @@ namespace SolucionFacturasLauncher
                                     }
                                     else
                                     {
-                                        log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se corresponde con el campo Fichero dentro del XML");
+                                        log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se corresponde con el campo Fichero delntro del XML");
                                         filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
                                         string path = filenameSalida;
                                         string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
