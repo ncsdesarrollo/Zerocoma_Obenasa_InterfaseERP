@@ -43,7 +43,7 @@ namespace SolucionFacturasComunes.Models
 
         public string IdMetadataArchivadorFacturasFechaEmision { get; set; }
 
-        public string IdMetadataArchivadorFacturasFechaRecpecion { get; set; }
+        public string IdMetadataArchivadorFacturasFechaRecepcion { get; set; }
 
         public string IdMetadataArchivadorFacturasTotalFactura { get; set; }
 
@@ -58,7 +58,9 @@ namespace SolucionFacturasComunes.Models
         public string IdMetadataArchivadorFacturasTipoFactura { get; set; }
 
         public string IdMetadataArchivadorFacturasConcepto { get; set; }
-        
+
+        public string IdMetadataArchivadorFacturasRazonSocialProveedor { get; set; }
+
 
         public string IdMetadataArchivadorFacturasFechaRegistroContable { get; set; }
 
@@ -152,7 +154,7 @@ namespace SolucionFacturasComunes.Models
 
         public DateTime FechaRecepcion { get; set; }
 
-        public string TotalFactura { get; set; }
+        public Decimal TotalFactura { get; set; }
 
         public string LibreNumero { get; set; }
 
@@ -180,6 +182,8 @@ namespace SolucionFacturasComunes.Models
         public string CuotaReq { get; set; }
 
         public string Concepto { get; set; }
+
+        public string RazonSocialProveedor { get; set; }
 
         public byte[] FacturaFile { get; set; }
     }
