@@ -940,7 +940,7 @@ namespace SolucionFacturasComunes
 
 
 
-        public async Task<ResultadoSolpheo> AvanzarWorkFlowAsync(string token, int idFileItem, string idKey, int idWorkflowActivity)
+        public async Task<ResultadoSolpheo> AvanzarWorkFlowAsync(string token, int idFileItem, string idKey, int idWorkflowActivity, bool notCheckRequiredVariables)
         {
             ResultadoSolpheo SolpheoResult = new ResultadoSolpheo();
 
@@ -951,7 +951,17 @@ namespace SolucionFacturasComunes
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                string json = "{\"idWorkflowActivity\":" + idWorkflowActivity + ",\"resultKey\":" + idKey + ",\"notCheckRequiredVariables\":false,\"replaceFile\":false}";
+                string json = "";
+
+                if (notCheckRequiredVariables)
+                {
+                    json = "{\"idWorkflowActivity\":" + idWorkflowActivity + ",\"resultKey\":" + idKey + ",\"notCheckRequiredVariables\":true,\"replaceFile\":false}";
+                }
+                else
+                {
+                    json = "{\"idWorkflowActivity\":" + idWorkflowActivity + ",\"resultKey\":" + idKey + ",\"notCheckRequiredVariables\":false,\"replaceFile\":false}";
+                }
+                
 
                 var responseClient = await client.PostAsync($"{this._urlTenant + ""}" + "api/workflowactivity/", new StringContent(json, Encoding.UTF8, "application/json"));
 

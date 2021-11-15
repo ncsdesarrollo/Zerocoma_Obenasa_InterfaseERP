@@ -21,10 +21,15 @@ namespace SolucionFacturasServicio
 
             if (args.Length > 0)
                 Tenant = args[0];
-            Tenant = "solpheo";
-                FacturasLauncher launcher = new FacturasLauncher();
-                launcher.Start(Tenant);
-            
+
+            if (ConfigurationManager.AppSettings["NombreJSONTenantPruebas"].ToString() != "")
+            {
+                Tenant = ConfigurationManager.AppSettings["NombreJSONTenantPruebas"].ToString();
+            }
+
+
+            launcher.Start(Tenant);
+
 
         }
 

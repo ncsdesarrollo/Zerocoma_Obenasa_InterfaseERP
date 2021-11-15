@@ -363,7 +363,7 @@ namespace SolucionFacturasLauncher
                         LibreLista.AppendChild(libreListaTexto);
                         fact.AppendChild(LibreLista);
                         XmlElement comentario = doc.CreateElement(string.Empty, "Comentarios", string.Empty);
-                        XmlText comentarioTexto = doc.CreateTextNode(factura.RutaDescarga + "Documento/BuscarDocumento?IdFileContainer=" + JsonConfig.IdFileContainerArchivadorFacturas + "&IdDocumento=" + factura.Identificador);
+                        XmlText comentarioTexto = doc.CreateTextNode(factura.RutaDescarga + "/Documento/BuscarDocumento?IdFileContainer=" + JsonConfig.IdFileContainerArchivadorFacturas + "&IdDocumento=" + factura.Identificador);
                         comentario.AppendChild(comentarioTexto);
                         fact.AppendChild(comentario);
                         doc.Save(RutaAccesoXMLEntradaERP + factura.Identificador + ".xml");
@@ -372,7 +372,7 @@ namespace SolucionFacturasLauncher
                         var resultIdWF = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(factura.Identificador));
                         if (resultIdWF.Mensaje != "null")
                         {
-                            var avance = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(factura.Identificador), JsonConfig.IdSalidaWorkFlowTareaPendienteEnvioAERP, int.Parse(resultIdWF.Mensaje));
+                            var avance = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(factura.Identificador), JsonConfig.IdSalidaWorkFlowTareaPendienteEnvioAERP, int.Parse(resultIdWF.Mensaje), true);
                             if (!avance.Resultado)
                             {
                                 log.Error("GetFacturasSolpheo - Error al avanzar Workflow tras enviar documento a ERP con IdFileItem " + factura.Identificador);
@@ -440,7 +440,7 @@ namespace SolucionFacturasLauncher
                                         {
                                             //Actualizamos las variables del WF al estado "Rechazada"
                                             var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
-                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoRechazada, int.Parse(resultIdWFSalida.Mensaje));
+                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoRechazada, int.Parse(resultIdWFSalida.Mensaje), true);
                                             if (!avancesalida.Resultado)
                                             {
                                                 //si da error se informa en el log y se mueve el XML a una subcarpeta KO
@@ -540,7 +540,7 @@ namespace SolucionFacturasLauncher
                                             }
                                             //Avanzamos el WF al estado = aceptada
                                             var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
-                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoAceptada, int.Parse(resultIdWFSalida.Mensaje));
+                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoAceptada, int.Parse(resultIdWFSalida.Mensaje), true);
                                             if (!avancesalida.Resultado)
                                             {
                                                 //si da error se informa en el log y se mueve el XML a una subcarpeta KO
@@ -571,7 +571,7 @@ namespace SolucionFacturasLauncher
                                         {
                                             //Actualizamos el WF al estado "Pagada"
                                             var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
-                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada, int.Parse(resultIdWFSalida.Mensaje));
+                                            var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada, int.Parse(resultIdWFSalida.Mensaje), true);
                                             if (!avancesalida.Resultado)
                                             {
                                                 //si da error se informa en el log y se mueve el XML a una subcarpeta KO
