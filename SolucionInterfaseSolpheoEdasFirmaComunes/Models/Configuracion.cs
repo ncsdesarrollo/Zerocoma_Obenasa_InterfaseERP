@@ -57,7 +57,7 @@ namespace SolucionFacturasComunes.Models
 
         public string IdMetadataArchivadorFacturasTipoFactura { get; set; }
 
-        public string IdMetadataArchivadorFacturasConcepto { get; set; }
+        public string IdMetadataArchivadorFacturasComentarios { get; set; }
 
         public string IdMetadataArchivadorFacturasRazonSocialProveedor { get; set; }
 
@@ -102,6 +102,12 @@ namespace SolucionFacturasComunes.Models
         public string RutaLogs { get; set; }
 
         public string RutaDescarga { get; set; }
+
+        public string EstadoFacturaPendienteContabilizada { get; set; }
+
+        public string EstadoFacturaContabilizadaOK { get; set; }
+
+        public string EstadoFacturaPendienteEnvioERP { get; set; }
     }
 
     public class ResultadoSolpheo
@@ -181,7 +187,7 @@ namespace SolucionFacturasComunes.Models
 
         public string CuotaReq { get; set; }
 
-        public string Concepto { get; set; }
+        public string Comentarios { get; set; }
 
         public string RazonSocialProveedor { get; set; }
 

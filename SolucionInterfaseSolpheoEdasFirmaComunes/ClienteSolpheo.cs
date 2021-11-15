@@ -953,7 +953,7 @@ namespace SolucionFacturasComunes
 
                 string json = "{\"idWorkflowActivity\":" + idWorkflowActivity + ",\"resultKey\":" + idKey + ",\"notCheckRequiredVariables\":false,\"replaceFile\":false}";
 
-                var responseClient = await client.PostAsync($"{this._urlTenant + "/"}" + "api/workflowactivity/", new StringContent(json, Encoding.UTF8, "application/json"));
+                var responseClient = await client.PostAsync($"{this._urlTenant + ""}" + "api/workflowactivity/", new StringContent(json, Encoding.UTF8, "application/json"));
 
                 string data = await responseClient.Content.ReadAsStringAsync();
 

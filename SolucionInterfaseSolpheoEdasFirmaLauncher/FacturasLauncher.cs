@@ -138,7 +138,7 @@ namespace SolucionFacturasLauncher
             int idMetadatoRegistroCuotaIVA = 0;
             int idMetadatoRegistroRecEq = 0;
             int idMetadatoRegistroCuotaReq = 0;
-            int idMetadatoArchivadorConcepto = 0;
+            int idMetadatoArchivadorComentarios = 0;
             int idMetadatoArchivadorRazonSocialProveedor = 0;
 
             try
@@ -148,7 +148,7 @@ namespace SolucionFacturasLauncher
                 var loginSolpheo = await clienteSolpheo.LoginAsync(JsonConfig.SolpheoUsuario, JsonConfig.SolpheoPassword, JsonConfig.SolpheoTenant, "multifuncional", "MfpSecret", "api");
 
                 // Nos traemos las facturas del archivador Facturas con estado "Pendiente enviar a ERP"
-                string jsonFiltrado = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Estado','description':'Estado','id': " + int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':'Pendiente enviar a ERP','type':0}}]";
+                string jsonFiltrado = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Estado','description':'Estado','id': " + int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':'" + JsonConfig.EstadoFacturaPendienteEnvioERP + "','type':0}}]";
 
                 var documentosPendientesEnvio = await clienteSolpheo.FileItemsAdvancednested(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), jsonFiltrado);
 
@@ -223,8 +223,8 @@ namespace SolucionFacturasLauncher
                     idMetadatoArchivadorTipoFactura = int.Parse(JsonConfig.IdMetadataArchivadorFacturasTipoFactura);
                     factura.TipoFactura = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorTipoFactura).FirstOrDefault().StringValue;
 
-                    idMetadatoArchivadorConcepto = int.Parse(JsonConfig.IdMetadataArchivadorFacturasConcepto);
-                    factura.Concepto = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorConcepto).FirstOrDefault().StringValue;
+                    idMetadatoArchivadorComentarios = int.Parse(JsonConfig.IdMetadataArchivadorFacturasComentarios);
+                    factura.Comentarios = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorComentarios).FirstOrDefault().StringValue;
 
                     idMetadatoArchivadorRazonSocialProveedor = int.Parse(JsonConfig.IdMetadataArchivadorFacturasRazonSocialProveedor);
                     factura.RazonSocialProveedor = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorRazonSocialProveedor).FirstOrDefault().StringValue;
@@ -290,7 +290,7 @@ namespace SolucionFacturasLauncher
                         totfact.AppendChild(totfactTexto);
                         fact.AppendChild(totfact);
                         XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
-                        XmlText conceptotexto = doc.CreateTextNode(factura.Concepto);
+                        XmlText conceptotexto = doc.CreateTextNode(factura.Comentarios);
                         concepto.AppendChild(conceptotexto);
                         fact.AppendChild(concepto);
                         XmlElement fichero = doc.CreateElement(string.Empty, "Fichero", string.Empty);
@@ -402,7 +402,7 @@ namespace SolucionFacturasLauncher
                             var respuestaMetadatosEstado = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
                             idMetadatoArchivadorEstado = int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado);
                             Estado = respuestaMetadatosEstado.Items.Where(m => m.IdMetadata == idMetadatoArchivadorEstado).FirstOrDefault().StringValue;
-                            if (Estado == "Pendiente Respuesta ERP" || Estado == "Aceptada")
+                            if (Estado == JsonConfig.EstadoFacturaPendienteContabilizada || Estado == JsonConfig.EstadoFacturaContabilizadaOK)
                             {
                                 string Comentario = "";
                                 string LibreFechaDia = "";
@@ -484,7 +484,7 @@ namespace SolucionFacturasLauncher
 
                                                 var metadata = new FileContainerMetadataValue();
                                                 metadata.IdFileItem = int.Parse(IdentificadorRespuesta);
-                                                metadata.IdMetadata = int.Parse(JsonConfig.IdMetadataArchivadorFacturasLibreLista);
+                                                metadata.IdMetadata = int.Parse(JsonConfig.IdMetadataArchivadorFacturasNumeroAsientoContable);
                                                 metadata.StringValue = LibreLista;
                                                 metadatas.Add(metadata);
                                                 //Actualizamos el metadato Libre Lista
@@ -506,11 +506,11 @@ namespace SolucionFacturasLauncher
                                                 if (result.Resultado && result2.Resultado)
                                                 {
                                                     var idWFActivity = int.Parse(resultIdWorkflow.Mensaje);
-                                                    var variableUpdatedLista = await clienteSolpheo.UpdateVariablesWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasLibreLista), "Libre Lista", "StringValue", LibreLista, idWFActivity);
+                                                    var variableUpdatedLista = await clienteSolpheo.UpdateVariablesWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), int.Parse(JsonConfig.IdMetadataArchivadorFacturasNumeroAsientoContable), "Número de asiento contable", "StringValue", LibreLista, idWFActivity);
                                                     variableSalidaLLResultado = variableUpdatedLista.Resultado;
                                                     if (!variableUpdatedLista.Resultado)
                                                     {
-                                                        log.Error("Modificar variable solpheo - No se ha podido modificar la variable de Solpheo LibreLista para el idfileitem " + IdentificadorRespuesta);
+                                                        log.Error("Modificar variable solpheo - No se ha podido modificar la variable de Solpheo NúmeroAsientoContable para el idfileitem " + IdentificadorRespuesta);
                                                     }
                                                     if (FechaContable != "")
                                                     {
