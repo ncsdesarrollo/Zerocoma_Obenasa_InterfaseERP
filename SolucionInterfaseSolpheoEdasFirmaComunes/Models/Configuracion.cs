@@ -103,6 +103,8 @@ namespace SolucionFacturasComunes.Models
 
         public string RutaDescarga { get; set; }
 
+        public string RutaPortalProveedores { get; set; }
+
         public string EstadoFacturaPendienteContabilizada { get; set; }
 
         public string EstadoFacturaContabilizadaOK { get; set; }

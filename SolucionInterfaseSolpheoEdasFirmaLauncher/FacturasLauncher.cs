@@ -708,7 +708,7 @@ namespace SolucionFacturasLauncher
             }
             for (int i = 0; i < listA.Count; i++)
             {
-                response = await GrabaCodigoObra(listA[i].ToString());
+                response = await GrabaCodigoObra(listA[i].ToString(), JsonConfig.RutaPortalProveedores);
             }
 
             if (_cont == 0)
@@ -738,10 +738,9 @@ namespace SolucionFacturasLauncher
             return response;
         }
 
-        public async Task<JsonResponse> GrabaCodigoObra(string id)
+        public async Task<JsonResponse> GrabaCodigoObra(string id, string url)
         {
             var response = new JsonResponse();
-            var url = $"https://api-portalproveedores-obenasa.ncs-spain.com/";
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -797,7 +796,7 @@ namespace SolucionFacturasLauncher
             }
             for (int i = 0; i < listA.Count; i++)
             {
-                response = await GrabaProveedor(listA[i].ToString(), listB[i].ToString(), listC[i].ToString());
+                response = await GrabaProveedor(listA[i].ToString(), listB[i].ToString(), listC[i].ToString(), JsonConfig.RutaPortalProveedores);
             }
 
             if (_cont == 0)
@@ -827,10 +826,10 @@ namespace SolucionFacturasLauncher
             return response;
         }
 
-        public async Task<JsonResponse> GrabaProveedor(string Nombre, string CIF, string Email)
+        public async Task<JsonResponse> GrabaProveedor(string Nombre, string CIF, string Email, string url)
         {
             var response = new JsonResponse();
-            var url = $"https://api-portalproveedores-obenasa.ncs-spain.com/";
+            //var url = $"https://api-portalproveedores-obenasa.ncs-spain.com/";
             try
             {
                 using (HttpClient client = new HttpClient())
