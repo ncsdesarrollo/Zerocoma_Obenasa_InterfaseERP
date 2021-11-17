@@ -28,9 +28,6 @@ namespace SolucionFacturasServicio
             }
 
 
-            launcher.Start(Tenant);
-
-
         }
 
         FacturasLauncher launcher = new FacturasLauncher();

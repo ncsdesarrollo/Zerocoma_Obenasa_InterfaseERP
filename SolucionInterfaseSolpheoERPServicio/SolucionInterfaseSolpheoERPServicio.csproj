@@ -49,10 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>45F7E124B766EA315FBC9A4A15FD381B83F9770C</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>0C58412284330AF1A050FA40847C00D88356AA5B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SolucionInterfaseSolpheoERPServicio_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SolucionInterfaseSolpheoERPServicio_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -61,9 +61,6 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Kyocera.Solpheo.ApiClient">
-      <HintPath>..\..\..\..\..\Desktop\Kyocera.Solpheo.ApiClient.dll</HintPath>
-    </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -119,6 +116,7 @@
     <None Include="Recursos\_InstaladorServicioWindows\Instalador.bat" />
     <None Include="Recursos\_InstaladorServicioWindows\Instalador.ps1" />
     <None Include="SolucionInterfaseSolpheoERPServicio_1_TemporaryKey.pfx" />
+    <None Include="SolucionInterfaseSolpheoERPServicio_2_TemporaryKey.pfx" />
     <None Include="SolucionInterfaseSolpheoERPServicio_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +128,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SolucionInterfaseSolpheoEdasFirmaLauncher\SolucionInterfaseSolpheoERPLauncher.csproj">
+    <ProjectReference Include="..\SolucionInterfaseSolpheoERPLauncher\SolucionInterfaseSolpheoERPLauncher.csproj">
       <Project>{c691aa91-cb0f-4788-9b99-0d855d01bc3b}</Project>
       <Name>SolucionInterfaseSolpheoERPLauncher</Name>
     </ProjectReference>
