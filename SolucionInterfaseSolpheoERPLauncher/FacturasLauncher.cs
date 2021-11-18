@@ -26,6 +26,29 @@ namespace SolucionFacturasLauncher
         protected string tenant;
         private ILogger log;
         public int _cont = 0;
+
+        int idMetadatoArchivadorCodigoFactura = 0;
+        int idMetadatoArchivadorSociedad = 0;
+        int idMetadatoArchivadorCIFProveedor = 0;
+        int idMetadatoArchivadorNumeroFactura = 0;
+        int idMetadatoArchivadorFechaEmision = 0;
+        int idMetadatoArchivadorFechaRecepcion = 0;
+        int idMetadatoArchivadorTotalFactura = 0;
+        int idMetadatoArchivadorLibreNumero = 0;
+        int idMetadatoArchivadorCodigoObra = 0;
+        int idMetadatoArchivadorNumeroPedido = 0;
+        int idMetadatoArchivadorLibreFecha = 0;
+        int idMetadatoArchivadorLibreLista = 0;
+        int idMetadatoArchivadorTipoFactura = 0;
+        int idMetadatoArchivadorEstado = 0;
+        int idMetadatoRegistroBase = 0;
+        int idMetadatoRegistroTipo = 0;
+        int idMetadatoRegistroCuotaIVA = 0;
+        int idMetadatoRegistroRecEq = 0;
+        int idMetadatoRegistroCuotaReq = 0;
+        int idMetadatoArchivadorComentarios = 0;
+        int idMetadatoArchivadorRazonSocialProveedor = 0;
+
         public FacturasLauncher()
         {
         }
@@ -131,33 +154,13 @@ namespace SolucionFacturasLauncher
             var response = new JsonResponse();
             bool resultadoOK = true;
             string Error = String.Empty;
-            int idMetadatoArchivadorCodigoFactura = 0;
-            int idMetadatoArchivadorSociedad = 0;
-            int idMetadatoArchivadorCIFProveedor = 0;
-            int idMetadatoArchivadorNumeroFactura = 0;
-            int idMetadatoArchivadorFechaEmision = 0;
-            int idMetadatoArchivadorFechaRecepcion = 0;
-            int idMetadatoArchivadorTotalFactura = 0;
-            int idMetadatoArchivadorLibreNumero = 0;
-            int idMetadatoArchivadorCodigoObra = 0;
-            int idMetadatoArchivadorNumeroPedido = 0;
-            int idMetadatoArchivadorLibreFecha = 0;
-            int idMetadatoArchivadorLibreLista = 0;
-            int idMetadatoArchivadorTipoFactura = 0;
-            int idMetadatoArchivadorEstado = 0;
-            int idMetadatoRegistroBase = 0;
-            int idMetadatoRegistroTipo = 0;
-            int idMetadatoRegistroCuotaIVA = 0;
-            int idMetadatoRegistroRecEq = 0;
-            int idMetadatoRegistroCuotaReq = 0;
-            int idMetadatoArchivadorComentarios = 0;
-            int idMetadatoArchivadorRazonSocialProveedor = 0;
+
 
             try
             {
                 // Nos logamos en Solpheo con los datos obtenidos del json de configuracion
                 var clienteSolpheo = new ClienteSolpheo(JsonConfig.SolpheoUrl);
-                var loginSolpheo = await clienteSolpheo.LoginAsync(JsonConfig.SolpheoUsuario, JsonConfig.SolpheoPassword, JsonConfig.SolpheoTenant, "multifuncional", "MfpSecret", "api");                
+                var loginSolpheo = await clienteSolpheo.LoginAsync(JsonConfig.SolpheoUsuario, JsonConfig.SolpheoPassword, JsonConfig.SolpheoTenant, "multifuncional", "MfpSecret", "api");
 
                 string RutaAccesoXMLEntradaERP = JsonConfig.XMLRutaEntradaERP;
 
@@ -253,137 +256,10 @@ namespace SolucionFacturasLauncher
                             idMetadatoArchivadorRazonSocialProveedor = int.Parse(JsonConfig.IdMetadataArchivadorFacturasRazonSocialProveedor);
                             factura.RazonSocialProveedor = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorRazonSocialProveedor).FirstOrDefault().StringValue;
 
-                            factura.RutaDescarga = JsonConfig.RutaDescarga;
+                            factura.RutaDescarga = JsonConfig.URLVisorDocumentos;
 
+                            XmlDocument doc = await GenerarXMLFactura(clienteSolpheo, loginSolpheo, JsonConfig, factura, FileItemsRegistro);
 
-
-                            XmlDocument doc = new XmlDocument();
-                            XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-                            XmlElement root = doc.DocumentElement;
-                            doc.InsertBefore(xmlDeclaration, root);
-                            XmlElement facturas = doc.CreateElement(string.Empty, "Facturas", string.Empty);
-                            facturas.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                            facturas.SetAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-                            doc.AppendChild(facturas);
-                            XmlElement fact = doc.CreateElement(string.Empty, "Factura", string.Empty);
-                            facturas.AppendChild(fact);
-                            XmlElement TipoAccion = doc.CreateElement(string.Empty, "Tipo", string.Empty);
-                            XmlText tipoacciontexto = doc.CreateTextNode("RECIBIDA");
-                            TipoAccion.AppendChild(tipoacciontexto);
-                            fact.AppendChild(TipoAccion);
-                            XmlElement numfact = doc.CreateElement(string.Empty, "Numero", string.Empty);
-                            XmlText tipofact = doc.CreateTextNode(factura.NumeroFactura);
-                            numfact.AppendChild(tipofact);
-                            fact.AppendChild(numfact);
-                            XmlElement FechaEmision = doc.CreateElement(string.Empty, "FechaEmision", string.Empty);
-                            fact.AppendChild(FechaEmision);
-                            XmlElement FechaEmisionDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
-                            XmlText DiaFE = doc.CreateTextNode(factura.FechaEmision.Day.ToString().PadLeft(2,'0'));
-                            FechaEmisionDia.AppendChild(DiaFE);
-                            FechaEmision.AppendChild(FechaEmisionDia);
-                            XmlElement FechaEmisionMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
-                            XmlText MesFE = doc.CreateTextNode(factura.FechaEmision.Month.ToString().PadLeft(2, '0'));
-                            FechaEmisionMes.AppendChild(MesFE);
-                            FechaEmision.AppendChild(FechaEmisionMes);
-                            XmlElement FechaEmisionAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
-                            XmlText AnoFE = doc.CreateTextNode(factura.FechaEmision.Year.ToString());
-                            FechaEmisionAno.AppendChild(AnoFE);
-                            FechaEmision.AppendChild(FechaEmisionAno);
-                            XmlElement FechaRecepcion = doc.CreateElement(string.Empty, "FechaRecepcion", string.Empty);
-                            fact.AppendChild(FechaRecepcion);
-                            XmlElement FechaRecepcionDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
-                            XmlText DiaFR = doc.CreateTextNode(factura.FechaRecepcion.Day.ToString().PadLeft(2, '0'));
-                            FechaRecepcionDia.AppendChild(DiaFR);
-                            FechaRecepcion.AppendChild(FechaRecepcionDia);
-                            XmlElement FechaRecepcionMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
-                            XmlText MesFR = doc.CreateTextNode(factura.FechaRecepcion.Month.ToString().PadLeft(2, '0'));
-                            FechaRecepcionMes.AppendChild(MesFR);
-                            FechaRecepcion.AppendChild(FechaRecepcionMes);
-                            XmlElement FechaRecepcionAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
-                            XmlText AnoFR = doc.CreateTextNode(factura.FechaRecepcion.Year.ToString());
-                            FechaRecepcionAno.AppendChild(AnoFR);
-                            FechaRecepcion.AppendChild(FechaRecepcionAno);
-                            XmlElement totfact = doc.CreateElement(string.Empty, "Total", string.Empty);
-                            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",", "."));
-                            totfact.AppendChild(totfactTexto);
-                            fact.AppendChild(totfact);
-                            XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
-                            XmlText conceptotexto = doc.CreateTextNode(factura.Comentarios);
-                            concepto.AppendChild(conceptotexto);
-                            fact.AppendChild(concepto);
-                            XmlElement fichero = doc.CreateElement(string.Empty, "Fichero", string.Empty);
-                            XmlText fichTexto = doc.CreateTextNode(factura.Identificador);
-                            fichero.AppendChild(fichTexto);
-                            fact.AppendChild(fichero);
-                            XmlElement Entidad = doc.CreateElement(string.Empty, "Entidad", string.Empty);
-                            fact.AppendChild(Entidad);
-                            XmlElement CifEntidad = doc.CreateElement(string.Empty, "Cif", string.Empty);
-                            XmlText Cif = doc.CreateTextNode(factura.CIFProveedor);
-                            CifEntidad.AppendChild(Cif);
-                            Entidad.AppendChild(CifEntidad);
-                            XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
-                            fact.AppendChild(Impuestos);
-                            foreach (var item in FileItemsRegistro)
-                            {
-                                var respuestaMetadatosRegistros = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerRegistroDatosFacturas), item.Id);
-
-                                idMetadatoRegistroBase = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasBaseSujeta);
-                                factura.BaseSujeta = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroBase).FirstOrDefault().DecimalValue.ToString();
-                                idMetadatoRegistroTipo = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVATipo);
-                                factura.TipoIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroTipo).FirstOrDefault().DecimalValue.ToString();
-                                idMetadatoRegistroCuotaIVA = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVACuota);
-                                factura.CuotaIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaIVA).FirstOrDefault().DecimalValue.ToString();
-                                idMetadatoRegistroRecEq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaTipo);
-                                factura.RecEq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroRecEq).FirstOrDefault().DecimalValue.ToString();
-                                idMetadatoRegistroCuotaReq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaCuota);
-                                factura.CuotaReq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaReq).FirstOrDefault().DecimalValue.ToString();
-                                XmlElement Impuesto = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
-                                Impuestos.AppendChild(Impuesto);
-                                XmlElement Base = doc.CreateElement(string.Empty, "Base", string.Empty);
-                                XmlText baseTexto = doc.CreateTextNode(factura.BaseSujeta.Replace(",", "."));
-                                Base.AppendChild(baseTexto);
-                                Impuesto.AppendChild(Base);
-                                XmlElement Tipo = doc.CreateElement(string.Empty, "Tipo", string.Empty);
-                                XmlText tipoTexto = doc.CreateTextNode(factura.TipoIVA.Replace(",", "."));
-                                Tipo.AppendChild(tipoTexto);
-                                Impuesto.AppendChild(Tipo);
-                                XmlElement CuotaIVA = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
-                                XmlText cuotaIVATexto = doc.CreateTextNode(factura.CuotaIVA.Replace(",", "."));
-                                CuotaIVA.AppendChild(cuotaIVATexto);
-                                Impuesto.AppendChild(CuotaIVA);
-                                XmlElement RecEq = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                                XmlText recEqTexto = doc.CreateTextNode(factura.RecEq.Replace(",", "."));
-                                RecEq.AppendChild(recEqTexto);
-                                Impuesto.AppendChild(RecEq);
-                                XmlElement CuotaReq = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                                XmlText cuotaReqTexto = doc.CreateTextNode(factura.CuotaReq.Replace(",", "."));
-                                CuotaReq.AppendChild(cuotaReqTexto);
-                                Impuesto.AppendChild(CuotaReq);
-                            }
-
-
-                            XmlElement LibreNumero = doc.CreateElement(string.Empty, "LibreNumero", string.Empty);
-                            fact.AppendChild(LibreNumero);
-                            XmlElement LibreTexto = doc.CreateElement(string.Empty, "LibreTexto", string.Empty);
-                            XmlText libreTextoTexto = doc.CreateTextNode("CodObra:" + factura.CodigoObra + " - NumPedido:" + factura.NumeroPedido);
-                            LibreTexto.AppendChild(libreTextoTexto);
-                            fact.AppendChild(LibreTexto);
-                            XmlElement LibreFecha = doc.CreateElement(string.Empty, "LibreFecha", string.Empty);
-                            fact.AppendChild(LibreFecha);
-                            XmlElement LibreFechaDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
-                            LibreFecha.AppendChild(LibreFechaDia);
-                            XmlElement LibreFechaMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
-                            LibreFecha.AppendChild(LibreFechaMes);
-                            XmlElement LibreFechaAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
-                            LibreFecha.AppendChild(LibreFechaAno);
-                            XmlElement LibreLista = doc.CreateElement(string.Empty, "LibreLista", string.Empty);
-                            XmlText libreListaTexto = doc.CreateTextNode(factura.TipoFactura);
-                            LibreLista.AppendChild(libreListaTexto);
-                            fact.AppendChild(LibreLista);
-                            XmlElement comentario = doc.CreateElement(string.Empty, "Comentarios", string.Empty);
-                            XmlText comentarioTexto = doc.CreateTextNode(factura.RutaDescarga + "/Documento/BuscarDocumento?IdFileContainer=" + JsonConfig.IdFileContainerArchivadorFacturas + "&IdDocumento=" + factura.Identificador);
-                            comentario.AppendChild(comentarioTexto);
-                            fact.AppendChild(comentario);
                             doc.Save(RutaAccesoXMLEntradaERP + "\\" + factura.Identificador + ".xml");
 
                             //Se avanza el WF al estado "Pendiente Respuesta Contabilización ERP"
@@ -405,8 +281,8 @@ namespace SolucionFacturasLauncher
                         }
                     }
                 }
-                
-                
+
+
                 //Recuperamos todos los XML de la carpeta de salida
                 string RutaAccesoSalidaERP = JsonConfig.XMLRutaSalidaERP;
                 string IdentificadorRespuesta = "";
@@ -692,11 +568,11 @@ namespace SolucionFacturasLauncher
                 }
 
                 //Carga de codigos de obra en el portal de proveedores
-                response = await FicheroCSV_CodigoObra(JsonConfig);
+                await FicheroCSV_CodigoObra(JsonConfig);
 
                 //Carga de proveedores en el portal de proveedores
-                response = await FicheroCSV_Proveedores(JsonConfig);
-                
+                await FicheroCSV_Proveedores(JsonConfig);
+
                 log.Information("GetFacturasSolpheo - Fin método");
             }
 
@@ -718,57 +594,229 @@ namespace SolucionFacturasLauncher
             return resultadoOK;
         }
 
-        public async Task<JsonResponse> FicheroCSV_CodigoObra(Configuracion JsonConfig)
+        private async Task<XmlDocument> GenerarXMLFactura(ClienteSolpheo clienteSolpheo, Login loginSolpheo, Configuracion JsonConfig, Factura factura, List<FileContainerListViewModel> FileItemsRegistro)
         {
-            var response = new JsonResponse();
-            //Leer fichero CSV de codigo de obra
-            string rutaCSVCodigoObra = JsonConfig.CSVCodigosObraRutaERP + @"CodigoObra.csv";
-            var reader = new StreamReader(File.OpenRead(rutaCSVCodigoObra));
-            List<string> listA = new List<string>();
-            while (!reader.EndOfStream)
+            XmlDocument doc = new XmlDocument();
+            XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            XmlElement root = doc.DocumentElement;
+            doc.InsertBefore(xmlDeclaration, root);
+            XmlElement facturas = doc.CreateElement(string.Empty, "Facturas", string.Empty);
+            facturas.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            facturas.SetAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+            doc.AppendChild(facturas);
+            XmlElement fact = doc.CreateElement(string.Empty, "Factura", string.Empty);
+            facturas.AppendChild(fact);
+            XmlElement TipoAccion = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+            XmlText tipoacciontexto = doc.CreateTextNode("RECIBIDA");
+            TipoAccion.AppendChild(tipoacciontexto);
+            fact.AppendChild(TipoAccion);
+            XmlElement numfact = doc.CreateElement(string.Empty, "Numero", string.Empty);
+            XmlText tipofact = doc.CreateTextNode(factura.NumeroFactura);
+            numfact.AppendChild(tipofact);
+            fact.AppendChild(numfact);
+            XmlElement FechaEmision = doc.CreateElement(string.Empty, "FechaEmision", string.Empty);
+            fact.AppendChild(FechaEmision);
+            XmlElement FechaEmisionDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
+            XmlText DiaFE = doc.CreateTextNode(factura.FechaEmision.Day.ToString().PadLeft(2, '0'));
+            FechaEmisionDia.AppendChild(DiaFE);
+            FechaEmision.AppendChild(FechaEmisionDia);
+            XmlElement FechaEmisionMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
+            XmlText MesFE = doc.CreateTextNode(factura.FechaEmision.Month.ToString().PadLeft(2, '0'));
+            FechaEmisionMes.AppendChild(MesFE);
+            FechaEmision.AppendChild(FechaEmisionMes);
+            XmlElement FechaEmisionAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
+            XmlText AnoFE = doc.CreateTextNode(factura.FechaEmision.Year.ToString());
+            FechaEmisionAno.AppendChild(AnoFE);
+            FechaEmision.AppendChild(FechaEmisionAno);
+            XmlElement FechaRecepcion = doc.CreateElement(string.Empty, "FechaRecepcion", string.Empty);
+            fact.AppendChild(FechaRecepcion);
+            XmlElement FechaRecepcionDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
+            XmlText DiaFR = doc.CreateTextNode(factura.FechaRecepcion.Day.ToString().PadLeft(2, '0'));
+            FechaRecepcionDia.AppendChild(DiaFR);
+            FechaRecepcion.AppendChild(FechaRecepcionDia);
+            XmlElement FechaRecepcionMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
+            XmlText MesFR = doc.CreateTextNode(factura.FechaRecepcion.Month.ToString().PadLeft(2, '0'));
+            FechaRecepcionMes.AppendChild(MesFR);
+            FechaRecepcion.AppendChild(FechaRecepcionMes);
+            XmlElement FechaRecepcionAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
+            XmlText AnoFR = doc.CreateTextNode(factura.FechaRecepcion.Year.ToString());
+            FechaRecepcionAno.AppendChild(AnoFR);
+            FechaRecepcion.AppendChild(FechaRecepcionAno);
+            XmlElement totfact = doc.CreateElement(string.Empty, "Total", string.Empty);
+            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",", "."));
+            totfact.AppendChild(totfactTexto);
+            fact.AppendChild(totfact);
+            XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
+            XmlText conceptotexto = doc.CreateTextNode(factura.Comentarios);
+            concepto.AppendChild(conceptotexto);
+            fact.AppendChild(concepto);
+            XmlElement fichero = doc.CreateElement(string.Empty, "Fichero", string.Empty);
+            XmlText fichTexto = doc.CreateTextNode(factura.Identificador);
+            fichero.AppendChild(fichTexto);
+            fact.AppendChild(fichero);
+            XmlElement Entidad = doc.CreateElement(string.Empty, "Entidad", string.Empty);
+            fact.AppendChild(Entidad);
+            XmlElement CifEntidad = doc.CreateElement(string.Empty, "Cif", string.Empty);
+            XmlText Cif = doc.CreateTextNode(factura.CIFProveedor);
+            CifEntidad.AppendChild(Cif);
+            Entidad.AppendChild(CifEntidad);
+            XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
+            fact.AppendChild(Impuestos);
+            foreach (var item in FileItemsRegistro)
             {
-                var line = reader.ReadLine();
-                var values = line.Split(';');
-                if (values[0] != "CodigoObra")
-                {
-                    listA.Add(values[0]);
-                }
-            }
-            for (int i = 0; i < listA.Count; i++)
-            {
-                response = await GrabaCodigoObra(listA[i].ToString(), JsonConfig.RutaPortalProveedores);
+                var respuestaMetadatosRegistros = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerRegistroDatosFacturas), item.Id);
+
+                idMetadatoRegistroBase = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasBaseSujeta);
+                factura.BaseSujeta = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroBase).FirstOrDefault().DecimalValue.ToString();
+                idMetadatoRegistroTipo = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVATipo);
+                factura.TipoIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroTipo).FirstOrDefault().DecimalValue.ToString();
+                idMetadatoRegistroCuotaIVA = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVACuota);
+                factura.CuotaIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaIVA).FirstOrDefault().DecimalValue.ToString();
+                idMetadatoRegistroRecEq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaTipo);
+                factura.RecEq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroRecEq).FirstOrDefault().DecimalValue.ToString();
+                idMetadatoRegistroCuotaReq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaCuota);
+                factura.CuotaReq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaReq).FirstOrDefault().DecimalValue.ToString();
+                XmlElement Impuesto = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
+                Impuestos.AppendChild(Impuesto);
+                XmlElement Base = doc.CreateElement(string.Empty, "Base", string.Empty);
+                XmlText baseTexto = doc.CreateTextNode(factura.BaseSujeta.Replace(",", "."));
+                Base.AppendChild(baseTexto);
+                Impuesto.AppendChild(Base);
+                XmlElement Tipo = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+                XmlText tipoTexto = doc.CreateTextNode(factura.TipoIVA.Replace(",", "."));
+                Tipo.AppendChild(tipoTexto);
+                Impuesto.AppendChild(Tipo);
+                XmlElement CuotaIVA = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
+                XmlText cuotaIVATexto = doc.CreateTextNode(factura.CuotaIVA.Replace(",", "."));
+                CuotaIVA.AppendChild(cuotaIVATexto);
+                Impuesto.AppendChild(CuotaIVA);
+                XmlElement RecEq = doc.CreateElement(string.Empty, "RecEq", string.Empty);
+                XmlText recEqTexto = doc.CreateTextNode(factura.RecEq.Replace(",", "."));
+                RecEq.AppendChild(recEqTexto);
+                Impuesto.AppendChild(RecEq);
+                XmlElement CuotaReq = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
+                XmlText cuotaReqTexto = doc.CreateTextNode(factura.CuotaReq.Replace(",", "."));
+                CuotaReq.AppendChild(cuotaReqTexto);
+                Impuesto.AppendChild(CuotaReq);
             }
 
-            if (_cont == 0)
+
+            XmlElement LibreNumero = doc.CreateElement(string.Empty, "LibreNumero", string.Empty);
+            fact.AppendChild(LibreNumero);
+            XmlElement LibreTexto = doc.CreateElement(string.Empty, "LibreTexto", string.Empty);
+            XmlText libreTextoTexto = doc.CreateTextNode("CodObra:" + factura.CodigoObra + " - NumPedido:" + factura.NumeroPedido);
+            LibreTexto.AppendChild(libreTextoTexto);
+            fact.AppendChild(LibreTexto);
+            XmlElement LibreFecha = doc.CreateElement(string.Empty, "LibreFecha", string.Empty);
+            fact.AppendChild(LibreFecha);
+            XmlElement LibreFechaDia = doc.CreateElement(string.Empty, "Dia", string.Empty);
+            LibreFecha.AppendChild(LibreFechaDia);
+            XmlElement LibreFechaMes = doc.CreateElement(string.Empty, "Mes", string.Empty);
+            LibreFecha.AppendChild(LibreFechaMes);
+            XmlElement LibreFechaAno = doc.CreateElement(string.Empty, "Ano", string.Empty);
+            LibreFecha.AppendChild(LibreFechaAno);
+            XmlElement LibreLista = doc.CreateElement(string.Empty, "LibreLista", string.Empty);
+            XmlText libreListaTexto = doc.CreateTextNode(factura.TipoFactura);
+            LibreLista.AppendChild(libreListaTexto);
+            fact.AppendChild(LibreLista);
+            XmlElement comentario = doc.CreateElement(string.Empty, "Comentarios", string.Empty);
+            XmlText comentarioTexto = doc.CreateTextNode(factura.RutaDescarga + "/Documento/BuscarDocumento?IdFileContainer=" + JsonConfig.IdFileContainerArchivadorFacturas + "&IdDocumento=" + factura.Identificador);
+            comentario.AppendChild(comentarioTexto);
+            fact.AppendChild(comentario);
+
+            return doc;
+        }
+
+        public async Task<bool> FicheroCSV_CodigoObra(Configuracion JsonConfig)
+        {
+            if (!Directory.Exists(JsonConfig.CSVCodigosObraRutaERP))
             {
-                //Si ha ido bien, se moverá el fichero en una ruta de Procesados_OK
-                string directoriosalidacopiadoCodigoObra = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_OK\";
-                string ficherosalidacopiadoCodigoObra = directoriosalidacopiadoCodigoObra + @"\CodigoObra.csv";
-                if (!Directory.Exists(directoriosalidacopiadoCodigoObra))
-                {
-                    Directory.CreateDirectory(directoriosalidacopiadoCodigoObra);
-                }
-                File.Move(rutaCSVCodigoObra, ficherosalidacopiadoCodigoObra);
+                log.Information($"FicheroCSV_CodigoObra - No existe el directorio de salida de este CSV -> {JsonConfig.CSVCodigosObraRutaERP}");
             }
             else
             {
-                //si ha ido mal alguna de las inserciones de codigos de obra
-                string directoriosalidacopiadoCodigoObra = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_KO\";
-                string ficherosalidacopiadoCodigoObra = directoriosalidacopiadoCodigoObra + @"\CodigoObra.csv";
-                if (!Directory.Exists(directoriosalidacopiadoCodigoObra))
+                string[] allfiles = Directory.GetFiles(JsonConfig.CSVCodigosObraRutaERP, "*.CSV", SearchOption.TopDirectoryOnly);
+                foreach (var file in allfiles)
                 {
-                    Directory.CreateDirectory(directoriosalidacopiadoCodigoObra);
+                    try
+                    {
+                        await BorrarCodigosObras(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+
+                        FileInfo info = new FileInfo(file);
+
+                        log.Information($"FicheroCSV_CodigoObra - Procesando fichero {info.Name}");
+
+                        bool resultadoFicheroOK = true;                        
+
+                        using (StreamReader sr = new StreamReader(file))
+                        {
+                            
+                            int numLinea = 0;
+
+                            while (sr.Peek() >= 0)
+                            {
+                                numLinea++;
+                                bool resultadoLineaOK = true;
+                                string datosLinea = "";
+
+                                try
+                                {
+                                    datosLinea = sr.ReadLine();
+
+                                    if (!string.IsNullOrEmpty(datosLinea))
+                                    {
+                                        resultadoLineaOK = await GrabaCodigoObra(datosLinea, JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+                                    }                                    
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    resultadoLineaOK = false;
+                                }
+                                finally
+                                {
+                                    if (!resultadoLineaOK)
+                                    {
+                                        resultadoFicheroOK = false;
+                                        log.Information($"FicheroCSV_CodigoObra - Procesando fichero {info.Name} - Error de la API al grabar el código obra {datosLinea} en la fial {numLinea} del fichero");
+                                    }
+                                }
+                            }
+                        }
+
+                        string directorioSalida = "";
+
+                        if (resultadoFicheroOK)
+                        {
+                            directorioSalida = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_OK\";
+                        }
+                        else
+                        {
+                            directorioSalida = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_KO\";
+                        }
+
+                        if (!Directory.Exists(directorioSalida))
+                        {
+                            Directory.CreateDirectory(directorioSalida);
+                        }                        
+
+                        File.Move(file, directorioSalida + "\\" + info.Name.Replace(".csv", "") + "_" + Guid.NewGuid().ToString() + ".csv");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"FicheroCSV_CodigoObra - Error general procesando fichero '{file}' - {ex.Message}", ex);
+                    }
                 }
-                File.Move(rutaCSVCodigoObra, ficherosalidacopiadoCodigoObra);
+
             }
 
-
-            return response;
+            return true;
         }
 
-        public async Task<JsonResponse> GrabaCodigoObra(string id, string url)
+        public async Task<bool> BorrarCodigosObras(string url, string ApiKey)
         {
-            var response = new JsonResponse();
+            bool resultadoOK = true;
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -776,88 +824,28 @@ namespace SolucionFacturasLauncher
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("apikey", "432dd8d9d39d5b8c7592614d636a397c");
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
 
-                    var content = new StringContent(JsonConvert.SerializeObject(id), System.Text.Encoding.UTF8, "application/json");
-
-                    var responseClient = client.PostAsync(new Uri(string.Format(url, $"/ePortalProveedores/AltaCodigoObra/CodigoObra/")), content).Result;
-                    if (responseClient.IsSuccessStatusCode)
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/BorrarCodigosObra"), null);
+                    if (!responseClient.IsSuccessStatusCode)
                     {
-                        string data = await responseClient.Content.ReadAsStringAsync();
-                        var resultado = responseClient.Content.ReadAsStringAsync().Result;
-                        return response;
-                    }
-                    else
-                    {
-                        var resultado = responseClient.Content.ReadAsStringAsync().Result;
-                        _cont = _cont + 1;
-                        return response;
+                        log.Information($"BorrarCodigosObras - Error en llamada al API del portal de proveedores para borrar los códigos de obras ");
+                        resultadoOK = false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                log.Error("Grabar Codigo Obra - No se ha podido grabar el codigo de obra " + id + " en el portal de proveedores ");
-                return response;
+                log.Error($"BorrarCodigosObras - Error en llamada al API del portal de proveedores para borrar los códigos de obras - {ex.Message}");
+                resultadoOK = false;
             }
+
+            return resultadoOK;
         }
 
-        public async Task<JsonResponse> FicheroCSV_Proveedores(Configuracion JsonConfig)
+        public async Task<bool> GrabaCodigoObra(string codObra, string url, string ApiKey)
         {
-            var response = new JsonResponse();
-            //Leer fichero CSV de proveedores
-            string rutaCSVProveedores = JsonConfig.CSVProveedoresRutaERP + @"Proveedores.csv";
-            var reader = new StreamReader(File.OpenRead(rutaCSVProveedores));
-            List<string> listA = new List<string>();
-            List<string> listB = new List<string>();
-            List<string> listC = new List<string>();
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                var values = line.Split(';');
-                if (values[0] != "Nombre Proveedor")
-                {
-                    listA.Add(values[0]);
-                    listB.Add(values[1]);
-                    listC.Add(values[2]);
-                }
-            }
-            for (int i = 0; i < listA.Count; i++)
-            {
-                response = await GrabaProveedor(listA[i].ToString(), listB[i].ToString(), listC[i].ToString(), JsonConfig.RutaPortalProveedores);
-            }
-
-            if (_cont == 0)
-            {
-                //Si ha ido bien, se moverá el fichero en una ruta de Procesados_OK
-                string directoriosalidacopiadoProveedor = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_OK\";
-                string ficherosalidacopiadoProveedor = directoriosalidacopiadoProveedor + @"\CodigoObra.csv";
-                if (!Directory.Exists(directoriosalidacopiadoProveedor))
-                {
-                    Directory.CreateDirectory(directoriosalidacopiadoProveedor);
-                }
-                File.Move(rutaCSVProveedores, ficherosalidacopiadoProveedor);
-            }
-            else
-            {
-                //si ha ido mal alguna de las inserciones de codigos de obra
-                string directoriosalidacopiadoProveedor = JsonConfig.CSVCodigosObraRutaERP + @"\PROCESADO_KO\";
-                string ficherosalidacopiadoProveedor = directoriosalidacopiadoProveedor + @"\CodigoObra.csv";
-                if (!Directory.Exists(directoriosalidacopiadoProveedor))
-                {
-                    Directory.CreateDirectory(directoriosalidacopiadoProveedor);
-                }
-                File.Move(rutaCSVProveedores, ficherosalidacopiadoProveedor);
-            }
-
-
-            return response;
-        }
-
-        public async Task<JsonResponse> GrabaProveedor(string Nombre, string CIF, string Email, string url)
-        {
-            var response = new JsonResponse();
-            //var url = $"https://api-portalproveedores-obenasa.ncs-spain.com/";
+            bool resultadoOK = true;
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -865,35 +853,160 @@ namespace SolucionFacturasLauncher
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("apikey", "432dd8d9d39d5b8c7592614d636a397c");
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);                    
 
-                    var formContent = new FormUrlEncodedContent(new[]
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/AltaCodigoObra/CodigoObra/{codObra}"), null);
+                    if (!responseClient.IsSuccessStatusCode)
                     {
-                        new KeyValuePair<string, string>("Nombre", Nombre),
-                        new KeyValuePair<string, string>("NIF", CIF),
-                        new KeyValuePair<string, string>("Email", Email),
-                    });
-
-                    var responseClient = client.PostAsync(new Uri(string.Format(url, $"/ePortalProveedores/AltaProveedores/")), formContent).Result;
-                    if (responseClient.IsSuccessStatusCode)
-                    {
-                        string data = await responseClient.Content.ReadAsStringAsync();
-                        var resultado = responseClient.Content.ReadAsStringAsync().Result;
-                        return response;
-                    }
-                    else
-                    {
-                        var resultado = responseClient.Content.ReadAsStringAsync().Result;
-                        _cont = _cont + 1;
-                        return response;
+                        log.Information($"Grabar Codigo Obra - Error en llamada al API del portal de proveedores para codigo de obra {codObra}");
+                        resultadoOK = false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                log.Error("Grabar Proveedores - No se ha podido grabar el proveedor " + Nombre + " en el portal de proveedores ");
-                return response;
+                log.Error($"Grabar Codigo Obra - Error en llamada al API del portal de proveedores para codigo de obra {codObra} - {ex.Message}");
+                resultadoOK = false;
             }
+
+            return resultadoOK;
+        }
+
+        public async Task<bool> FicheroCSV_Proveedores(Configuracion JsonConfig)
+        {
+            if (!Directory.Exists(JsonConfig.CSVProveedoresRutaERP))
+            {
+                log.Information($"FicheroCSV_Proveedores - No existe el directorio de salida de este CSV -> {JsonConfig.CSVProveedoresRutaERP}");
+                return false;
+            }
+
+            string[] allfiles = Directory.GetFiles(JsonConfig.CSVProveedoresRutaERP, "*.CSV", SearchOption.TopDirectoryOnly);
+            foreach (var file in allfiles)
+            {
+                try
+                {
+                    FileInfo info = new FileInfo(file);
+
+                    log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name}");                    
+
+                    bool resultadoFicheroOK = true;
+
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+
+                        int numLinea = 0;
+
+                        while (sr.Peek() >= 0)
+                        {
+                            numLinea++;
+                            bool resultadoLineaOK = true;
+                            string datosLinea = "";
+
+                            try
+                            {
+                                datosLinea = sr.ReadLine();
+
+                                if (!string.IsNullOrEmpty(datosLinea))
+                                {
+                                    var datosProveedor = datosLinea.Split(';');
+
+                                    if (string.IsNullOrEmpty(datosProveedor[0]) || string.IsNullOrEmpty(datosProveedor[1]) || string.IsNullOrEmpty(datosProveedor[2]) || datosProveedor[2] == "#")
+                                    {
+                                        log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name} - Error al leer la fila {numLinea} del fichero. Datos incompletos");
+                                    }
+                                    else
+                                    {
+                                        var emails = datosProveedor[2].Split('#');
+
+                                        foreach(string email in emails)
+                                        {
+                                            if (!string.IsNullOrEmpty(email))
+                                            {
+                                                var resultadoEmail = await GrabaProveedor(datosProveedor[0], datosProveedor[1], email, datosProveedor[3], JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+
+                                                if (!resultadoEmail) { resultadoLineaOK = false; }
+                                            }                                            
+
+                                        }
+                                        
+                                    }
+                                }
+
+                                
+                            }
+
+                            catch (Exception ex)
+                            {
+                                resultadoLineaOK = false;
+                            }
+                            finally
+                            {
+                                if (!resultadoLineaOK)
+                                {
+                                    resultadoFicheroOK = false;
+                                    log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name} - Error de la API al grabar la fila {numLinea} del fichero");
+                                }
+                            }
+                        }
+                    }
+
+                    string directorioSalida = "";
+
+                    if (resultadoFicheroOK)
+                    {
+                        directorioSalida = JsonConfig.CSVProveedoresRutaERP + @"\PROCESADO_OK\";
+                    }
+                    else
+                    {
+                        directorioSalida = JsonConfig.CSVProveedoresRutaERP + @"\PROCESADO_KO\";
+                    }
+
+                    if (!Directory.Exists(directorioSalida))
+                    {
+                        Directory.CreateDirectory(directorioSalida);
+                    }
+                    File.Move(file, directorioSalida + "\\" + info.Name.Replace(".csv", "") + "_" + Guid.NewGuid().ToString() + ".csv");
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    log.Error($"FicheroCSV_Proveedores - Error general procesando fichero '{file}' - {ex.Message}", ex);
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> GrabaProveedor(string CIF, string Nombre, string Email, string fechaReenvioEmailBienvenida, string url, string ApiKey)
+        {
+            bool resultadoOK = true;
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);                    
+
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/AltaProveedores/Nombre/{Nombre}/NIF/{CIF}/Email/{Email}/CodigoPerfil/PROV"), null);
+                    if (!responseClient.IsSuccessStatusCode)
+                    {
+                        log.Information($"Grabar Proveedores - Resultado no OK en llamada al API del portal de proveedores para proveedor con nombre {Nombre}, CIF {CIF} y Email {Email}");
+                        resultadoOK = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Grabar Proveedores - Error general en llamada al API del portal de proveedores para proveedor con nombre {Nombre}, CIF {CIF} y Email {Email} - {ex.Message}");
+                resultadoOK = false;
+            }
+
+            return resultadoOK;
         }
 
     }

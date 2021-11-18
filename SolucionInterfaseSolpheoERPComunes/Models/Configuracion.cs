@@ -101,9 +101,11 @@ namespace SolucionFacturasComunes.Models
 
         public string RutaLogs { get; set; }
 
-        public string RutaDescarga { get; set; }
+        public string URLVisorDocumentos { get; set; }
 
-        public string RutaPortalProveedores { get; set; }
+        public string URLAPIPortalProveedores { get; set; }
+
+        public string ApiKeyAPIPortalProveedores { get; set; }
 
         public string EstadoFacturaPendienteContabilizada { get; set; }
 

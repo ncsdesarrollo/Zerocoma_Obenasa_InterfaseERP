@@ -25,6 +25,7 @@ namespace SolucionFacturasServicio
             if (ConfigurationManager.AppSettings["NombreJSONTenantPruebas"].ToString() != "")
             {
                 Tenant = ConfigurationManager.AppSettings["NombreJSONTenantPruebas"].ToString();
+                launcher.Start(Tenant);
             }
 
 
