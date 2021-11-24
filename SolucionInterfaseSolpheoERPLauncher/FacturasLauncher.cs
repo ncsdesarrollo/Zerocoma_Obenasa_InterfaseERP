@@ -14,7 +14,7 @@ using SolucionFacturasComunes;
 using Kyocera.Solpheo.ApiClient.Models;
 using System.Xml;
 using System.Xml.Schema;
-
+using System.Text;
 
 namespace SolucionFacturasLauncher
 {
@@ -746,11 +746,11 @@ namespace SolucionFacturasLauncher
 
                         log.Information($"FicheroCSV_CodigoObra - Procesando fichero {info.Name}");
 
-                        bool resultadoFicheroOK = true;                        
+                        bool resultadoFicheroOK = true;
 
                         using (StreamReader sr = new StreamReader(file))
                         {
-                            
+
                             int numLinea = 0;
 
                             while (sr.Peek() >= 0)
@@ -766,7 +766,7 @@ namespace SolucionFacturasLauncher
                                     if (!string.IsNullOrEmpty(datosLinea))
                                     {
                                         resultadoLineaOK = await GrabaCodigoObra(datosLinea, JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
-                                    }                                    
+                                    }
                                 }
 
                                 catch (Exception ex)
@@ -798,7 +798,7 @@ namespace SolucionFacturasLauncher
                         if (!Directory.Exists(directorioSalida))
                         {
                             Directory.CreateDirectory(directorioSalida);
-                        }                        
+                        }
 
                         File.Move(file, directorioSalida + "\\" + info.Name.Replace(".csv", "") + "_" + Guid.NewGuid().ToString() + ".csv");
 
@@ -853,7 +853,7 @@ namespace SolucionFacturasLauncher
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);                    
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
 
                     var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/AltaCodigoObra/CodigoObra/{codObra}"), null);
                     if (!responseClient.IsSuccessStatusCode)
@@ -887,7 +887,7 @@ namespace SolucionFacturasLauncher
                 {
                     FileInfo info = new FileInfo(file);
 
-                    log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name}");                    
+                    log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name}");
 
                     bool resultadoFicheroOK = true;
 
@@ -918,21 +918,21 @@ namespace SolucionFacturasLauncher
                                     {
                                         var emails = datosProveedor[2].Split('#');
 
-                                        foreach(string email in emails)
+                                        foreach (string email in emails)
                                         {
                                             if (!string.IsNullOrEmpty(email))
                                             {
                                                 var resultadoEmail = await GrabaProveedor(datosProveedor[0], datosProveedor[1], email, datosProveedor[3], JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
 
                                                 if (!resultadoEmail) { resultadoLineaOK = false; }
-                                            }                                            
+                                            }
 
                                         }
-                                        
+
                                     }
                                 }
 
-                                
+
                             }
 
                             catch (Exception ex)
@@ -990,9 +990,22 @@ namespace SolucionFacturasLauncher
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);                    
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
 
-                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/AltaProveedores/Nombre/{Nombre}/NIF/{CIF}/Email/{Email}/CodigoPerfil/PROV"), null);
+                    var parameters = new Dictionary<string, string>();
+
+                    parameters.Add("Nombre", Nombre);
+                    parameters.Add("NIF", CIF);
+                    parameters.Add("Email", Email);
+                    parameters.Add("CodigoPerfil", "PROV");
+                    parameters.Add("FechaMod", fechaReenvioEmailBienvenida);
+
+                    string output = JsonConvert.SerializeObject(parameters);
+                    var jsonData = new StringContent(output, Encoding.UTF8, "application/json");
+
+                    var responseClient = await client.PostAsync(url + "/ePortalProveedores/AltaProveedores", jsonData);
+
+
                     if (!responseClient.IsSuccessStatusCode)
                     {
                         log.Information($"Grabar Proveedores - Resultado no OK en llamada al API del portal de proveedores para proveedor con nombre {Nombre}, CIF {CIF} y Email {Email}");
