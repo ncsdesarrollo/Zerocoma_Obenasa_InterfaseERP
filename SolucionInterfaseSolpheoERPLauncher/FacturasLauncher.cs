@@ -657,7 +657,19 @@ namespace SolucionFacturasLauncher
             XmlElement Entidad = doc.CreateElement(string.Empty, "Entidad", string.Empty);
             fact.AppendChild(Entidad);
             XmlElement CifEntidad = doc.CreateElement(string.Empty, "Cif", string.Empty);
-            XmlText Cif = doc.CreateTextNode(factura.CIFProveedor);
+
+            XmlText Cif;
+
+            if (!string.IsNullOrEmpty(factura.CIFProveedor))
+            {
+                Cif = doc.CreateTextNode(factura.CIFProveedor);
+            }
+            else
+            {
+                Cif = doc.CreateTextNode(factura.RazonSocialProveedor.Split('#')[1].Trim());
+            }
+
+            
             CifEntidad.AppendChild(Cif);
             Entidad.AppendChild(CifEntidad);
             XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
@@ -994,7 +1006,7 @@ namespace SolucionFacturasLauncher
 
                     var parameters = new Dictionary<string, string>();
 
-                    parameters.Add("Nombre", Nombre);
+                    parameters.Add("Nombre", Nombre + " # " + CIF);
                     parameters.Add("NIF", CIF);
                     parameters.Add("Email", Email);
                     parameters.Add("CodigoPerfil", "PROV");
