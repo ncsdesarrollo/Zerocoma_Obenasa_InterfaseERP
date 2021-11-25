@@ -71,23 +71,53 @@ namespace SolucionFacturasComunes.Models
         public string IdMetadataArchivadorFacturasNumeroPedido { get; set; }
 
                      
-        //Metadatos del Registro Datos Facturas
+        //Metadatos del Archivador para los impuestos 
 
-        public string IdMetadataRegistroDatosFacturasCodigoFactura { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto1BaseSujeta { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasSociedad { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto1IVATipo { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasBaseSujeta { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto1IVACuota { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasIVATipo { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto1RecargoEquivalenciaTipo { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasIVACuota { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto1RecargoEquivalenciaCuota { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasRecargoEquivalenciaTipo { get; set; }
 
-        public string IdMetadataRegistroDatosFacturasRecargoEquivalenciaCuota { get; set; }
+        public string IdMetadataArchivadorFacturasImpuesto2BaseSujeta { get; set; }
 
-               
+        public string IdMetadataArchivadorFacturasImpuesto2IVATipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto2IVACuota { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto2RecargoEquivalenciaTipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto2RecargoEquivalenciaCuota { get; set; }
+
+
+        public string IdMetadataArchivadorFacturasImpuesto3BaseSujeta { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto3IVATipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto3IVACuota { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto3RecargoEquivalenciaTipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto3RecargoEquivalenciaCuota { get; set; }
+
+
+
+        public string IdMetadataArchivadorFacturasImpuesto4BaseSujeta { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto4IVATipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto4IVACuota { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto4RecargoEquivalenciaTipo { get; set; }
+
+        public string IdMetadataArchivadorFacturasImpuesto4RecargoEquivalenciaCuota { get; set; }
+
+
 
         public string IdWorkflow { get; set; }
 
@@ -194,6 +224,47 @@ namespace SolucionFacturasComunes.Models
         public string Comentarios { get; set; }
 
         public string RazonSocialProveedor { get; set; }
+
+
+        public Decimal Impuesto1Base { get; set; }
+
+        public string Impuesto1Tipo { get; set; }
+
+        public Decimal Impuesto1Cuota { get; set; }
+
+        public string Impuesto1RecEqTipo { get; set; }
+
+        public Decimal Impuesto1RecEqCuota { get; set; }
+
+        public Decimal Impuesto2Base { get; set; }
+
+        public string Impuesto2Tipo { get; set; }
+
+        public Decimal Impuesto2Cuota { get; set; }
+
+        public string Impuesto2RecEqTipo { get; set; }
+
+        public Decimal Impuesto2RecEqCuota { get; set; }
+
+        public Decimal Impuesto3Base { get; set; }
+
+        public string Impuesto3Tipo { get; set; }
+
+        public Decimal Impuesto3Cuota { get; set; }
+
+        public string Impuesto3RecEqTipo { get; set; }
+
+        public Decimal Impuesto3RecEqCuota { get; set; }
+
+        public Decimal Impuesto4Base { get; set; }
+
+        public string Impuesto4Tipo { get; set; }
+
+        public Decimal Impuesto4Cuota { get; set; }
+
+        public string Impuesto4RecEqTipo { get; set; }
+
+        public Decimal Impuesto4RecEqCuota { get; set; }
 
         public byte[] FacturaFile { get; set; }
     }

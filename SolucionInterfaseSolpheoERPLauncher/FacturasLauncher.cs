@@ -41,13 +41,30 @@ namespace SolucionFacturasLauncher
         int idMetadatoArchivadorLibreLista = 0;
         int idMetadatoArchivadorTipoFactura = 0;
         int idMetadatoArchivadorEstado = 0;
-        int idMetadatoRegistroBase = 0;
-        int idMetadatoRegistroTipo = 0;
-        int idMetadatoRegistroCuotaIVA = 0;
-        int idMetadatoRegistroRecEq = 0;
-        int idMetadatoRegistroCuotaReq = 0;
         int idMetadatoArchivadorComentarios = 0;
         int idMetadatoArchivadorRazonSocialProveedor = 0;
+
+        int idMetadatoArchivadorImpuesto1Base = 0;
+        int idMetadatoArchivadorImpuesto1IVATipo = 0;
+        int idMetadatoArchivadorImpuesto1IVACuota = 0;
+        int idMetadatoArchivadorImpuesto1RecargoEquivalenciaTipo = 0;
+        int idMetadatoArchivadorImpuesto1RecargoEquivalenciaCuota = 0;
+        int idMetadatoArchivadorImpuesto2Base = 0;
+        int idMetadatoArchivadorImpuesto2IVATipo = 0;
+        int idMetadatoArchivadorImpuesto2IVACuota = 0;
+        int idMetadatoArchivadorImpuesto2RecargoEquivalenciaTipo = 0;
+        int idMetadatoArchivadorImpuesto2RecargoEquivalenciaCuota = 0;
+        int idMetadatoArchivadorImpuesto3Base = 0;
+        int idMetadatoArchivadorImpuesto3IVATipo = 0;
+        int idMetadatoArchivadorImpuesto3IVACuota = 0;
+        int idMetadatoArchivadorImpuesto3RecargoEquivalenciaTipo = 0;
+        int idMetadatoArchivadorImpuesto3RecargoEquivalenciaCuota = 0;
+        int idMetadatoArchivadorImpuesto4Base = 0;
+        int idMetadatoArchivadorImpuesto4IVATipo = 0;
+        int idMetadatoArchivadorImpuesto4IVACuota = 0;
+        int idMetadatoArchivadorImpuesto4RecargoEquivalenciaTipo = 0;
+        int idMetadatoArchivadorImpuesto4RecargoEquivalenciaCuota = 0;
+
 
         public FacturasLauncher()
         {
@@ -196,13 +213,6 @@ namespace SolucionFacturasLauncher
                             idMetadatoArchivadorCodigoFactura = int.Parse(JsonConfig.IdMetadataArchivadorFacturasCodigoFactura);
                             factura.Codigofactura = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorCodigoFactura).FirstOrDefault().StringValue;
 
-                            //Nos traemos los datos del registros DatosFactura de cada una de las facturas obtenidas anteriormente
-                            string jsonFiltradoRegistro = "[{'typeOrAndSelected':'and','term':{'leftOperator':{'name':'Código_Factura','description':'Código_Factura','id': " + int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasCodigoFactura) + ",'idType':1,'isProperty':false,'isContent':false},'rightOperator':" + factura.Codigofactura + ",'type':0}}]";
-
-                            var documentosPendientesRegistro = await clienteSolpheo.FileItemsAdvancednested(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerRegistroDatosFacturas), jsonFiltradoRegistro);
-
-                            List<FileContainerListViewModel> FileItemsRegistro = documentosPendientesRegistro.Items.ToList();
-
                             // Recuperamos los metadatos del archivador de facturas para poder insertarlos en el XML
                             idMetadatoArchivadorSociedad = int.Parse(JsonConfig.IdMetadataArchivadorFacturasSociedad);
                             factura.Sociedad = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorSociedad).FirstOrDefault().StringValue;
@@ -256,9 +266,70 @@ namespace SolucionFacturasLauncher
                             idMetadatoArchivadorRazonSocialProveedor = int.Parse(JsonConfig.IdMetadataArchivadorFacturasRazonSocialProveedor);
                             factura.RazonSocialProveedor = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorRazonSocialProveedor).FirstOrDefault().StringValue;
 
+
+                            idMetadatoArchivadorImpuesto1Base = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto1BaseSujeta);
+                            factura.Impuesto1Base = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto1Base).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto1IVATipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto1IVATipo);
+                            factura.Impuesto1Tipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto1IVATipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto1IVACuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto1IVACuota);
+                            factura.Impuesto1Cuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto1IVACuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto1RecargoEquivalenciaTipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto1RecargoEquivalenciaTipo);
+                            factura.Impuesto1RecEqTipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto1RecargoEquivalenciaTipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto1RecargoEquivalenciaCuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto1RecargoEquivalenciaCuota);
+                            factura.Impuesto1RecEqCuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto1RecargoEquivalenciaCuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto2Base = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto2BaseSujeta);
+                            factura.Impuesto2Base = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto2Base).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto2IVATipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto2IVATipo);
+                            factura.Impuesto2Tipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto2IVATipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto2IVACuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto2IVACuota);
+                            factura.Impuesto2Cuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto2IVACuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto2RecargoEquivalenciaTipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto2RecargoEquivalenciaTipo);
+                            factura.Impuesto2RecEqTipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto2RecargoEquivalenciaTipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto2RecargoEquivalenciaCuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto2RecargoEquivalenciaCuota);
+                            factura.Impuesto2RecEqCuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto2RecargoEquivalenciaCuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto3Base = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto3BaseSujeta);
+                            factura.Impuesto3Base = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto3Base).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto3IVATipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto3IVATipo);
+                            factura.Impuesto3Tipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto3IVATipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto3IVACuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto3IVACuota);
+                            factura.Impuesto3Cuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto3IVACuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto3RecargoEquivalenciaTipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto3RecargoEquivalenciaTipo);
+                            factura.Impuesto3RecEqTipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto3RecargoEquivalenciaTipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto3RecargoEquivalenciaCuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto3RecargoEquivalenciaCuota);
+                            factura.Impuesto3RecEqCuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto3RecargoEquivalenciaCuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto4Base = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto4BaseSujeta);
+                            factura.Impuesto4Base = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto4Base).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto4IVATipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto4IVATipo);
+                            factura.Impuesto4Tipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto4IVATipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto4IVACuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto4IVACuota);
+                            factura.Impuesto4Cuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto4IVACuota).FirstOrDefault().DecimalValue);
+
+                            idMetadatoArchivadorImpuesto4RecargoEquivalenciaTipo = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto4RecargoEquivalenciaTipo);
+                            factura.Impuesto4RecEqTipo = respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto4RecargoEquivalenciaTipo).FirstOrDefault().StringValue;
+
+                            idMetadatoArchivadorImpuesto4RecargoEquivalenciaCuota = int.Parse(JsonConfig.IdMetadataArchivadorFacturasImpuesto4RecargoEquivalenciaCuota);
+                            factura.Impuesto4RecEqCuota = Convert.ToDecimal(respuestaMetadatos.Items.Where(m => m.IdMetadata == idMetadatoArchivadorImpuesto4RecargoEquivalenciaCuota).FirstOrDefault().DecimalValue);
+
                             factura.RutaDescarga = JsonConfig.URLVisorDocumentos;
 
-                            XmlDocument doc = await GenerarXMLFactura(clienteSolpheo, loginSolpheo, JsonConfig, factura, FileItemsRegistro);
+                            XmlDocument doc = await GenerarXMLFactura(clienteSolpheo, loginSolpheo, JsonConfig, factura);
 
                             doc.Save(RutaAccesoXMLEntradaERP + "\\" + factura.Identificador + ".xml");
 
@@ -594,7 +665,7 @@ namespace SolucionFacturasLauncher
             return resultadoOK;
         }
 
-        private async Task<XmlDocument> GenerarXMLFactura(ClienteSolpheo clienteSolpheo, Login loginSolpheo, Configuracion JsonConfig, Factura factura, List<FileContainerListViewModel> FileItemsRegistro)
+        private async Task<XmlDocument> GenerarXMLFactura(ClienteSolpheo clienteSolpheo, Login loginSolpheo, Configuracion JsonConfig, Factura factura)
         {
             XmlDocument doc = new XmlDocument();
             XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -643,7 +714,7 @@ namespace SolucionFacturasLauncher
             FechaRecepcionAno.AppendChild(AnoFR);
             FechaRecepcion.AppendChild(FechaRecepcionAno);
             XmlElement totfact = doc.CreateElement(string.Empty, "Total", string.Empty);
-            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",", "."));
+            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString());
             totfact.AppendChild(totfactTexto);
             fact.AppendChild(totfact);
             XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
@@ -662,42 +733,105 @@ namespace SolucionFacturasLauncher
             Entidad.AppendChild(CifEntidad);
             XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
             fact.AppendChild(Impuestos);
-            foreach (var item in FileItemsRegistro)
+            if (factura.Impuesto1Base > 0 && factura.Impuesto1Tipo != null && factura.Impuesto1Cuota > 0)
             {
-                var respuestaMetadatosRegistros = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerRegistroDatosFacturas), item.Id);
-
-                idMetadatoRegistroBase = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasBaseSujeta);
-                factura.BaseSujeta = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroBase).FirstOrDefault().DecimalValue.ToString();
-                idMetadatoRegistroTipo = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVATipo);
-                factura.TipoIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroTipo).FirstOrDefault().DecimalValue.ToString();
-                idMetadatoRegistroCuotaIVA = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasIVACuota);
-                factura.CuotaIVA = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaIVA).FirstOrDefault().DecimalValue.ToString();
-                idMetadatoRegistroRecEq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaTipo);
-                factura.RecEq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroRecEq).FirstOrDefault().DecimalValue.ToString();
-                idMetadatoRegistroCuotaReq = int.Parse(JsonConfig.IdMetadataRegistroDatosFacturasRecargoEquivalenciaCuota);
-                factura.CuotaReq = respuestaMetadatosRegistros.Items.Where(m => m.IdMetadata == idMetadatoRegistroCuotaReq).FirstOrDefault().DecimalValue.ToString();
-                XmlElement Impuesto = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
-                Impuestos.AppendChild(Impuesto);
-                XmlElement Base = doc.CreateElement(string.Empty, "Base", string.Empty);
-                XmlText baseTexto = doc.CreateTextNode(factura.BaseSujeta.Replace(",", "."));
-                Base.AppendChild(baseTexto);
-                Impuesto.AppendChild(Base);
-                XmlElement Tipo = doc.CreateElement(string.Empty, "Tipo", string.Empty);
-                XmlText tipoTexto = doc.CreateTextNode(factura.TipoIVA.Replace(",", "."));
-                Tipo.AppendChild(tipoTexto);
-                Impuesto.AppendChild(Tipo);
-                XmlElement CuotaIVA = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
-                XmlText cuotaIVATexto = doc.CreateTextNode(factura.CuotaIVA.Replace(",", "."));
-                CuotaIVA.AppendChild(cuotaIVATexto);
-                Impuesto.AppendChild(CuotaIVA);
-                XmlElement RecEq = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                XmlText recEqTexto = doc.CreateTextNode(factura.RecEq.Replace(",", "."));
-                RecEq.AppendChild(recEqTexto);
-                Impuesto.AppendChild(RecEq);
-                XmlElement CuotaReq = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                XmlText cuotaReqTexto = doc.CreateTextNode(factura.CuotaReq.Replace(",", "."));
-                CuotaReq.AppendChild(cuotaReqTexto);
-                Impuesto.AppendChild(CuotaReq);
+                XmlElement Impuesto1 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
+                Impuestos.AppendChild(Impuesto1);
+                XmlElement Base1 = doc.CreateElement(string.Empty, "Base", string.Empty);
+                XmlText baseTexto1 = doc.CreateTextNode(factura.Impuesto1Base.ToString().Replace(",", "."));
+                Base1.AppendChild(baseTexto1);
+                Impuesto1.AppendChild(Base1);
+                XmlElement Tipo1 = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+                XmlText tipoTexto1 = doc.CreateTextNode(factura.Impuesto1Tipo.Replace(",","."));
+                Tipo1.AppendChild(tipoTexto1);
+                Impuesto1.AppendChild(Tipo1);
+                XmlElement CuotaIVA1 = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
+                XmlText cuotaIVATexto1 = doc.CreateTextNode(factura.Impuesto1Cuota.ToString().Replace(",", "."));
+                CuotaIVA1.AppendChild(cuotaIVATexto1);
+                Impuesto1.AppendChild(CuotaIVA1);
+                XmlElement RecEq1 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
+                XmlText recEqTexto1 = doc.CreateTextNode(factura.Impuesto1RecEqTipo);
+                RecEq1.AppendChild(recEqTexto1);
+                Impuesto1.AppendChild(RecEq1);
+                XmlElement CuotaReq1 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
+                XmlText cuotaReqTexto1 = doc.CreateTextNode(factura.Impuesto1RecEqCuota.ToString());
+                CuotaReq1.AppendChild(cuotaReqTexto1);
+                Impuesto1.AppendChild(CuotaReq1);
+            }
+            if (factura.Impuesto2Base > 0 && factura.Impuesto2Tipo != null && factura.Impuesto2Cuota > 0)
+            {
+                XmlElement Impuesto2 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
+                Impuestos.AppendChild(Impuesto2);
+                XmlElement Base2 = doc.CreateElement(string.Empty, "Base", string.Empty);
+                XmlText baseTexto2 = doc.CreateTextNode(factura.Impuesto2Base.ToString().Replace(",", "."));
+                Base2.AppendChild(baseTexto2);
+                Impuesto2.AppendChild(Base2);
+                XmlElement Tipo2 = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+                XmlText tipoTexto2 = doc.CreateTextNode(factura.Impuesto2Tipo.Replace(",", "."));
+                Tipo2.AppendChild(tipoTexto2);
+                Impuesto2.AppendChild(Tipo2);
+                XmlElement CuotaIVA2 = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
+                XmlText cuotaIVATexto2 = doc.CreateTextNode(factura.Impuesto2Cuota.ToString().Replace(",", "."));
+                CuotaIVA2.AppendChild(cuotaIVATexto2);
+                Impuesto2.AppendChild(CuotaIVA2);
+                XmlElement RecEq2 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
+                XmlText recEqTexto2 = doc.CreateTextNode(factura.Impuesto2RecEqTipo);
+                RecEq2.AppendChild(recEqTexto2);
+                Impuesto2.AppendChild(RecEq2);
+                XmlElement CuotaReq2 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
+                XmlText cuotaReqTexto2 = doc.CreateTextNode(factura.Impuesto2RecEqCuota.ToString());
+                CuotaReq2.AppendChild(cuotaReqTexto2);
+                Impuesto2.AppendChild(CuotaReq2);
+            }
+            if (factura.Impuesto3Base > 0 && factura.Impuesto3Tipo != null && factura.Impuesto3Cuota > 0)
+            {
+                XmlElement Impuesto3 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
+                Impuestos.AppendChild(Impuesto3);
+                XmlElement Base3 = doc.CreateElement(string.Empty, "Base", string.Empty);
+                XmlText baseTexto3 = doc.CreateTextNode(factura.Impuesto3Base.ToString().Replace(",", "."));
+                Base3.AppendChild(baseTexto3);
+                Impuesto3.AppendChild(Base3);
+                XmlElement Tipo3 = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+                XmlText tipoTexto3 = doc.CreateTextNode(factura.Impuesto3Tipo.Replace(",", "."));
+                Tipo3.AppendChild(tipoTexto3);
+                Impuesto3.AppendChild(Tipo3);
+                XmlElement CuotaIVA3 = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
+                XmlText cuotaIVATexto3 = doc.CreateTextNode(factura.Impuesto3Cuota.ToString().Replace(",", "."));
+                CuotaIVA3.AppendChild(cuotaIVATexto3);
+                Impuesto3.AppendChild(CuotaIVA3);
+                XmlElement RecEq3 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
+                XmlText recEqTexto3 = doc.CreateTextNode(factura.Impuesto3RecEqTipo);
+                RecEq3.AppendChild(recEqTexto3);
+                Impuesto3.AppendChild(RecEq3);
+                XmlElement CuotaReq3 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
+                XmlText cuotaReqTexto3 = doc.CreateTextNode(factura.Impuesto3RecEqCuota.ToString());
+                CuotaReq3.AppendChild(cuotaReqTexto3);
+                Impuesto3.AppendChild(CuotaReq3);
+            }
+            if (factura.Impuesto4Base > 0 && factura.Impuesto4Tipo != null && factura.Impuesto4Cuota > 0)
+            {
+                XmlElement Impuesto4 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
+                Impuestos.AppendChild(Impuesto4);
+                XmlElement Base4 = doc.CreateElement(string.Empty, "Base", string.Empty);
+                XmlText baseTexto4 = doc.CreateTextNode(factura.Impuesto4Base.ToString().Replace(",", "."));
+                Base4.AppendChild(baseTexto4);
+                Impuesto4.AppendChild(Base4);
+                XmlElement Tipo4 = doc.CreateElement(string.Empty, "Tipo", string.Empty);
+                XmlText tipoTexto4 = doc.CreateTextNode(factura.Impuesto4Tipo.Replace(",", "."));
+                Tipo4.AppendChild(tipoTexto4);
+                Impuesto4.AppendChild(Tipo4);
+                XmlElement CuotaIVA4 = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
+                XmlText cuotaIVATexto4 = doc.CreateTextNode(factura.Impuesto4Cuota.ToString().Replace(",", "."));
+                CuotaIVA4.AppendChild(cuotaIVATexto4);
+                Impuesto4.AppendChild(CuotaIVA4);
+                XmlElement RecEq4 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
+                XmlText recEqTexto4 = doc.CreateTextNode(factura.Impuesto4RecEqTipo);
+                RecEq4.AppendChild(recEqTexto4);
+                Impuesto4.AppendChild(RecEq4);
+                XmlElement CuotaReq4 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
+                XmlText cuotaReqTexto4 = doc.CreateTextNode(factura.Impuesto4RecEqCuota.ToString());
+                CuotaReq4.AppendChild(cuotaReqTexto4);
+                Impuesto4.AppendChild(CuotaReq4);
             }
 
 
