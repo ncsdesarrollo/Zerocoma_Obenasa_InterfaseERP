@@ -714,7 +714,7 @@ namespace SolucionFacturasLauncher
             FechaRecepcionAno.AppendChild(AnoFR);
             FechaRecepcion.AppendChild(FechaRecepcionAno);
             XmlElement totfact = doc.CreateElement(string.Empty, "Total", string.Empty);
-            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString());
+            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",","."));
             totfact.AppendChild(totfactTexto);
             fact.AppendChild(totfact);
             XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
@@ -762,11 +762,11 @@ namespace SolucionFacturasLauncher
                 CuotaIVA1.AppendChild(cuotaIVATexto1);
                 Impuesto1.AppendChild(CuotaIVA1);
                 XmlElement RecEq1 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                XmlText recEqTexto1 = doc.CreateTextNode(factura.Impuesto1RecEqTipo);
+                XmlText recEqTexto1 = doc.CreateTextNode(factura.Impuesto1RecEqTipo == null ? "" : factura.Impuesto1RecEqTipo.Replace(",", "."));
                 RecEq1.AppendChild(recEqTexto1);
                 Impuesto1.AppendChild(RecEq1);
                 XmlElement CuotaReq1 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                XmlText cuotaReqTexto1 = doc.CreateTextNode(factura.Impuesto1RecEqCuota.ToString());
+                XmlText cuotaReqTexto1 = doc.CreateTextNode((factura.Impuesto1RecEqCuota == 0 ? "" : factura.Impuesto1RecEqCuota.ToString().Replace(",", ".")));
                 CuotaReq1.AppendChild(cuotaReqTexto1);
                 Impuesto1.AppendChild(CuotaReq1);
             }
@@ -787,11 +787,11 @@ namespace SolucionFacturasLauncher
                 CuotaIVA2.AppendChild(cuotaIVATexto2);
                 Impuesto2.AppendChild(CuotaIVA2);
                 XmlElement RecEq2 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                XmlText recEqTexto2 = doc.CreateTextNode(factura.Impuesto2RecEqTipo);
+                XmlText recEqTexto2 = doc.CreateTextNode(factura.Impuesto2RecEqTipo == null ? "" : factura.Impuesto2RecEqTipo.Replace(",", "."));
                 RecEq2.AppendChild(recEqTexto2);
                 Impuesto2.AppendChild(RecEq2);
                 XmlElement CuotaReq2 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                XmlText cuotaReqTexto2 = doc.CreateTextNode(factura.Impuesto2RecEqCuota.ToString());
+                XmlText cuotaReqTexto2 = doc.CreateTextNode((factura.Impuesto2RecEqCuota == 0 ? "" : factura.Impuesto2RecEqCuota.ToString().Replace(",", ".")));
                 CuotaReq2.AppendChild(cuotaReqTexto2);
                 Impuesto2.AppendChild(CuotaReq2);
             }
@@ -812,11 +812,11 @@ namespace SolucionFacturasLauncher
                 CuotaIVA3.AppendChild(cuotaIVATexto3);
                 Impuesto3.AppendChild(CuotaIVA3);
                 XmlElement RecEq3 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                XmlText recEqTexto3 = doc.CreateTextNode(factura.Impuesto3RecEqTipo);
+                XmlText recEqTexto3 = doc.CreateTextNode(factura.Impuesto3RecEqTipo == null ? "" : factura.Impuesto3RecEqTipo.Replace(",", "."));
                 RecEq3.AppendChild(recEqTexto3);
                 Impuesto3.AppendChild(RecEq3);
                 XmlElement CuotaReq3 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                XmlText cuotaReqTexto3 = doc.CreateTextNode(factura.Impuesto3RecEqCuota.ToString());
+                XmlText cuotaReqTexto3 = doc.CreateTextNode((factura.Impuesto3RecEqCuota == 0 ? "" : factura.Impuesto3RecEqCuota.ToString().Replace(",", ".")));
                 CuotaReq3.AppendChild(cuotaReqTexto3);
                 Impuesto3.AppendChild(CuotaReq3);
             }
@@ -837,11 +837,11 @@ namespace SolucionFacturasLauncher
                 CuotaIVA4.AppendChild(cuotaIVATexto4);
                 Impuesto4.AppendChild(CuotaIVA4);
                 XmlElement RecEq4 = doc.CreateElement(string.Empty, "RecEq", string.Empty);
-                XmlText recEqTexto4 = doc.CreateTextNode(factura.Impuesto4RecEqTipo);
+                XmlText recEqTexto4 = doc.CreateTextNode(factura.Impuesto4RecEqTipo == null ? "" : factura.Impuesto4RecEqTipo.Replace(",", "."));
                 RecEq4.AppendChild(recEqTexto4);
                 Impuesto4.AppendChild(RecEq4);
                 XmlElement CuotaReq4 = doc.CreateElement(string.Empty, "CuotaReq", string.Empty);
-                XmlText cuotaReqTexto4 = doc.CreateTextNode(factura.Impuesto4RecEqCuota.ToString());
+                XmlText cuotaReqTexto4 = doc.CreateTextNode((factura.Impuesto4RecEqCuota == 0 ? "" : factura.Impuesto4RecEqCuota.ToString().Replace(",", ".")));
                 CuotaReq4.AppendChild(cuotaReqTexto4);
                 Impuesto4.AppendChild(CuotaReq4);
             }
