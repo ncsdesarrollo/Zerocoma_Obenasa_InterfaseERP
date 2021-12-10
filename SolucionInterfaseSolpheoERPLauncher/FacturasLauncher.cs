@@ -1037,6 +1037,8 @@ namespace SolucionFacturasLauncher
 
                     bool resultadoFicheroOK = true;
 
+                    string CSVCon1SoloProveedor = (File.ReadAllLines(file).Length == 1? "1" : "0");
+
                     using (StreamReader sr = new StreamReader(file))
                     {
 
@@ -1050,6 +1052,8 @@ namespace SolucionFacturasLauncher
 
                             try
                             {
+                                
+
                                 datosLinea = sr.ReadLine();
 
                                 if (!string.IsNullOrEmpty(datosLinea))
@@ -1068,7 +1072,7 @@ namespace SolucionFacturasLauncher
                                         {
                                             if (!string.IsNullOrEmpty(email))
                                             {
-                                                var resultadoEmail = await GrabaProveedor(datosProveedor[0], datosProveedor[1], email, datosProveedor[3], JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+                                                var resultadoEmail = await GrabaProveedor(datosProveedor[0], datosProveedor[1], email, datosProveedor[3], CSVCon1SoloProveedor, JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
 
                                                 if (!resultadoEmail) { resultadoLineaOK = false; }
                                             }
@@ -1125,7 +1129,7 @@ namespace SolucionFacturasLauncher
             return true;
         }
 
-        public async Task<bool> GrabaProveedor(string CIF, string Nombre, string Email, string fechaReenvioEmailBienvenida, string url, string ApiKey)
+        public async Task<bool> GrabaProveedor(string CIF, string Nombre, string Email, string fechaReenvioEmailBienvenida, string forzarEnvioCorreoBienvenida, string url, string ApiKey)
         {
             bool resultadoOK = true;
 
@@ -1145,6 +1149,7 @@ namespace SolucionFacturasLauncher
                     parameters.Add("Email", Email);
                     parameters.Add("CodigoPerfil", "PROV");
                     parameters.Add("FechaMod", fechaReenvioEmailBienvenida);
+                    parameters.Add("ForzarEnvioCorreoBienvenida", forzarEnvioCorreoBienvenida);                    
 
                     string output = JsonConvert.SerializeObject(parameters);
                     var jsonData = new StringContent(output, Encoding.UTF8, "application/json");
