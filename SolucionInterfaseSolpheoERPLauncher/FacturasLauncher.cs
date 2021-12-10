@@ -542,17 +542,17 @@ namespace SolucionFacturasLauncher
                                                 File.Move(path, ficherosalidacopiado);
                                             }
                                         }
-                                        else if (Comentario.ToUpper() == "PAGADA")
+                                        else if (Comentario.ToUpper() == "PAGOAPROBADO")
                                         {
-                                            //Actualizamos el WF al estado "Pagada"
+                                            //Actualizamos el WF al estado "Pago Aprobado"
                                             var resultIdWFSalida = await clienteSolpheo.GetIdWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta));
                                             var avancesalida = await clienteSolpheo.AvanzarWorkFlowAsync(loginSolpheo.AccessToken, int.Parse(IdentificadorRespuesta), JsonConfig.IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada, int.Parse(resultIdWFSalida.Mensaje), true);
                                             if (!avancesalida.Resultado)
                                             {
                                                 //si da error se informa en el log y se mueve el XML a una subcarpeta KO
-                                                log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Pagada para el IdFileItem " + IdentificadorRespuesta);
+                                                log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Pago Aprobado para el IdFileItem " + IdentificadorRespuesta);
                                                 string path = filenameSalida;
-                                                string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGO_PROCESADO_KO\";
+                                                string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGOAPROBADO_PROCESADO_KO\";
                                                 string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
@@ -564,7 +564,7 @@ namespace SolucionFacturasLauncher
                                             {
                                                 //si ha ido bien, se mueve el XML a una subcarpeta OK
                                                 string path = filenameSalida;
-                                                string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGO_PROCESADO_OK\";
+                                                string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGOAPROBADO_PROCESADO_OK\";
                                                 string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
