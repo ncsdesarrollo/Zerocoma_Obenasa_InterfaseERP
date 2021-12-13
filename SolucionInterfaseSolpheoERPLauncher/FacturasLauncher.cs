@@ -329,7 +329,7 @@ namespace SolucionFacturasLauncher
 
                             factura.RutaDescarga = JsonConfig.URLVisorDocumentos;
 
-                            XmlDocument doc = await GenerarXMLFactura(clienteSolpheo, loginSolpheo, JsonConfig, factura);
+                            XmlDocument doc = GenerarXMLFactura(clienteSolpheo, loginSolpheo, JsonConfig, factura);
 
                             doc.Save(RutaAccesoXMLEntradaERP + "\\" + factura.Identificador + ".xml");
 
@@ -665,7 +665,7 @@ namespace SolucionFacturasLauncher
             return resultadoOK;
         }
 
-        private async Task<XmlDocument> GenerarXMLFactura(ClienteSolpheo clienteSolpheo, Login loginSolpheo, Configuracion JsonConfig, Factura factura)
+        private XmlDocument GenerarXMLFactura(ClienteSolpheo clienteSolpheo, Login loginSolpheo, Configuracion JsonConfig, Factura factura)
         {
             XmlDocument doc = new XmlDocument();
             XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -714,7 +714,7 @@ namespace SolucionFacturasLauncher
             FechaRecepcionAno.AppendChild(AnoFR);
             FechaRecepcion.AppendChild(FechaRecepcionAno);
             XmlElement totfact = doc.CreateElement(string.Empty, "Total", string.Empty);
-            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",","."));
+            XmlText totfactTexto = doc.CreateTextNode(factura.TotalFactura.ToString().Replace(",", "."));
             totfact.AppendChild(totfactTexto);
             fact.AppendChild(totfact);
             XmlElement concepto = doc.CreateElement(string.Empty, "Concepto", string.Empty);
@@ -740,7 +740,7 @@ namespace SolucionFacturasLauncher
                 Cif = doc.CreateTextNode(factura.RazonSocialProveedor.Split('#')[1].Trim());
             }
 
-            
+
             CifEntidad.AppendChild(Cif);
             Entidad.AppendChild(CifEntidad);
             XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
@@ -754,7 +754,7 @@ namespace SolucionFacturasLauncher
                 Base1.AppendChild(baseTexto1);
                 Impuesto1.AppendChild(Base1);
                 XmlElement Tipo1 = doc.CreateElement(string.Empty, "Tipo", string.Empty);
-                XmlText tipoTexto1 = doc.CreateTextNode(factura.Impuesto1Tipo.Replace(",","."));
+                XmlText tipoTexto1 = doc.CreateTextNode(factura.Impuesto1Tipo.Replace(",", "."));
                 Tipo1.AppendChild(tipoTexto1);
                 Impuesto1.AppendChild(Tipo1);
                 XmlElement CuotaIVA1 = doc.CreateElement(string.Empty, "CuotaIVA", string.Empty);
@@ -875,6 +875,8 @@ namespace SolucionFacturasLauncher
 
         public async Task<bool> FicheroCSV_CodigoObra(Configuracion JsonConfig)
         {
+            bool encontradosNuevosFicheros = false;
+
             if (!Directory.Exists(JsonConfig.CSVCodigosObraRutaERP))
             {
                 log.Information($"FicheroCSV_CodigoObra - No existe el directorio de salida de este CSV -> {JsonConfig.CSVCodigosObraRutaERP}");
@@ -886,6 +888,8 @@ namespace SolucionFacturasLauncher
                 {
                     try
                     {
+                        encontradosNuevosFicheros = true;
+
                         await BorrarCodigosObras(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
 
                         FileInfo info = new FileInfo(file);
@@ -955,6 +959,11 @@ namespace SolucionFacturasLauncher
                     }
                 }
 
+                if (encontradosNuevosFicheros)
+                {
+                    await ActualizarListaSolpheoCodigosObras(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+                }
+
             }
 
             return true;
@@ -989,6 +998,35 @@ namespace SolucionFacturasLauncher
             return resultadoOK;
         }
 
+        public async Task<bool> ActualizarListaSolpheoCodigosObras(string url, string ApiKey)
+        {
+            bool resultadoOK = true;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
+
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/ActualizarListaValoresSolpheoCodigosObra"), null);
+                    if (!responseClient.IsSuccessStatusCode)
+                    {
+                        log.Information($"actualizarListaSolpheoCodigosObras - Error en llamada al API del portal de proveedores ActualizarListaValoresSolpheoCodigosObra");
+                        resultadoOK = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"actualizarListaSolpheoCodigosObras - Error en llamada al API del portal de proveedores ActualizarListaValoresSolpheoCodigosObra - {ex.Message}");
+                resultadoOK = false;
+            }
+
+            return resultadoOK;
+        }
+        
         public async Task<bool> GrabaCodigoObra(string codObra, string url, string ApiKey)
         {
             bool resultadoOK = true;
@@ -1020,6 +1058,8 @@ namespace SolucionFacturasLauncher
 
         public async Task<bool> FicheroCSV_Proveedores(Configuracion JsonConfig)
         {
+            bool encontradosNuevosFicheros = false;
+
             if (!Directory.Exists(JsonConfig.CSVProveedoresRutaERP))
             {
                 log.Information($"FicheroCSV_Proveedores - No existe el directorio de salida de este CSV -> {JsonConfig.CSVProveedoresRutaERP}");
@@ -1029,6 +1069,8 @@ namespace SolucionFacturasLauncher
             string[] allfiles = Directory.GetFiles(JsonConfig.CSVProveedoresRutaERP, "*.CSV", SearchOption.TopDirectoryOnly);
             foreach (var file in allfiles)
             {
+                encontradosNuevosFicheros = true;
+
                 try
                 {
                     FileInfo info = new FileInfo(file);
@@ -1037,7 +1079,7 @@ namespace SolucionFacturasLauncher
 
                     bool resultadoFicheroOK = true;
 
-                    string CSVCon1SoloProveedor = (File.ReadAllLines(file).Length == 1? "1" : "0");
+                    string CSVCon1SoloProveedor = (File.ReadAllLines(file).Length == 1 ? "1" : "0");
 
                     using (StreamReader sr = new StreamReader(file))
                     {
@@ -1052,7 +1094,7 @@ namespace SolucionFacturasLauncher
 
                             try
                             {
-                                
+
 
                                 datosLinea = sr.ReadLine();
 
@@ -1126,6 +1168,11 @@ namespace SolucionFacturasLauncher
                 }
             }
 
+            if (encontradosNuevosFicheros)
+            {
+                await ActualizarListasSolpheoCIFYRazonesSocialesProveedores(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+            }
+
             return true;
         }
 
@@ -1149,7 +1196,7 @@ namespace SolucionFacturasLauncher
                     parameters.Add("Email", Email);
                     parameters.Add("CodigoPerfil", "PROV");
                     parameters.Add("FechaMod", fechaReenvioEmailBienvenida);
-                    parameters.Add("ForzarEnvioCorreoBienvenida", forzarEnvioCorreoBienvenida);                    
+                    parameters.Add("ForzarEnvioCorreoBienvenida", forzarEnvioCorreoBienvenida);
 
                     string output = JsonConvert.SerializeObject(parameters);
                     var jsonData = new StringContent(output, Encoding.UTF8, "application/json");
@@ -1167,6 +1214,35 @@ namespace SolucionFacturasLauncher
             catch (Exception ex)
             {
                 log.Error($"Grabar Proveedores - Error general en llamada al API del portal de proveedores para proveedor con nombre {Nombre}, CIF {CIF} y Email {Email} - {ex.Message}");
+                resultadoOK = false;
+            }
+
+            return resultadoOK;
+        }
+
+        public async Task<bool> ActualizarListasSolpheoCIFYRazonesSocialesProveedores(string url, string ApiKey)
+        {
+            bool resultadoOK = true;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
+
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/ActualizarListaValoresSolpheoProveedores"), null);
+                    if (!responseClient.IsSuccessStatusCode)
+                    {
+                        log.Information($"ActualizarListasSolpheoCIFYRazonesSocialesProveedores - Error en llamada al API del portal de proveedores ActualizarListaValoresSolpheoProveedores");
+                        resultadoOK = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"ActualizarListasSolpheoCIFYRazonesSocialesProveedores - Error en llamada al API del portal de proveedores ActualizarListaValoresSolpheoProveedores - {ex.Message}");
                 resultadoOK = false;
             }
 
