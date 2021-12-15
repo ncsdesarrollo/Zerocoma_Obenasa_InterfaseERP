@@ -632,9 +632,6 @@ namespace SolucionFacturasLauncher
                             }
                             File.Move(path, ficherosalidacopiado);
                         }
-
-
-
                     }
                 }
 
