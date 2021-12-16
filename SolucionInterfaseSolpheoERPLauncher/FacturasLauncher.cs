@@ -742,7 +742,7 @@ namespace SolucionFacturasLauncher
             Entidad.AppendChild(CifEntidad);
             XmlElement Impuestos = doc.CreateElement(string.Empty, "Impuestos", string.Empty);
             fact.AppendChild(Impuestos);
-            if (factura.Impuesto1Base > 0 && factura.Impuesto1Tipo != null && factura.Impuesto1Cuota > 0)
+            if (factura.Impuesto1Base > 0 && factura.Impuesto1Tipo != null)
             {
                 XmlElement Impuesto1 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
                 Impuestos.AppendChild(Impuesto1);
@@ -767,7 +767,7 @@ namespace SolucionFacturasLauncher
                 CuotaReq1.AppendChild(cuotaReqTexto1);
                 Impuesto1.AppendChild(CuotaReq1);
             }
-            if (factura.Impuesto2Base > 0 && factura.Impuesto2Tipo != null && factura.Impuesto2Cuota > 0)
+            if (factura.Impuesto2Base > 0 && factura.Impuesto2Tipo != null )
             {
                 XmlElement Impuesto2 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
                 Impuestos.AppendChild(Impuesto2);
@@ -792,7 +792,7 @@ namespace SolucionFacturasLauncher
                 CuotaReq2.AppendChild(cuotaReqTexto2);
                 Impuesto2.AppendChild(CuotaReq2);
             }
-            if (factura.Impuesto3Base > 0 && factura.Impuesto3Tipo != null && factura.Impuesto3Cuota > 0)
+            if (factura.Impuesto3Base > 0 && factura.Impuesto3Tipo != null )
             {
                 XmlElement Impuesto3 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
                 Impuestos.AppendChild(Impuesto3);
@@ -817,7 +817,7 @@ namespace SolucionFacturasLauncher
                 CuotaReq3.AppendChild(cuotaReqTexto3);
                 Impuesto3.AppendChild(CuotaReq3);
             }
-            if (factura.Impuesto4Base > 0 && factura.Impuesto4Tipo != null && factura.Impuesto4Cuota > 0)
+            if (factura.Impuesto4Base > 0 && factura.Impuesto4Tipo != null )
             {
                 XmlElement Impuesto4 = doc.CreateElement(string.Empty, "Impuesto", string.Empty);
                 Impuestos.AppendChild(Impuesto4);
