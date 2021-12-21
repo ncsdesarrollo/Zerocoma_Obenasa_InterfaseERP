@@ -1076,7 +1076,26 @@ namespace SolucionFacturasLauncher
 
                     bool resultadoFicheroOK = true;
 
-                    string CSVCon1SoloProveedor = (File.ReadAllLines(file).Length == 1 ? "1" : "0");
+                    var lineCount = 0;
+                    string line = string.Empty;
+                    using (var readerlines = File.OpenText(file))
+                    {
+                        while ((line = readerlines.ReadLine()) != null)
+                        {
+                            if (!line.Equals(string.Empty))
+                            {
+                                lineCount++;
+                            }
+                        }
+                    }
+
+                    string CSVCon1SoloProveedor = (lineCount == 1 ? "1" : "0");
+
+                    if (CSVCon1SoloProveedor == "1")
+                    {
+                        log.Information($"FicheroCSV_Proveedores - Procesando fichero {info.Name} - Fichero con 1 sola línea");
+                    }
+
 
                     using (StreamReader sr = new StreamReader(file))
                     {
