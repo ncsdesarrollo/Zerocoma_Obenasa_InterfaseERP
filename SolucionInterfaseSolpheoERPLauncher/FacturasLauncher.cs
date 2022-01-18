@@ -365,15 +365,27 @@ namespace SolucionFacturasLauncher
                 else
                 {
                     string[] allfiles = Directory.GetFiles(RutaAccesoSalidaERP, "*.XML", SearchOption.TopDirectoryOnly);
+                    Array.Sort(allfiles, StringComparer.InvariantCulture);
+
                     foreach (var file in allfiles)
                     {
+                        FileInfo info = new FileInfo(file);
+
                         try
-                        {
-                            FileInfo info = new FileInfo(file);
+                        {   
 
                             log.Information($"GetFacturasSolpheo - Procesando fichero {info.Name}");
 
-                            IdentificadorRespuesta = info.Name.Substring(0, info.Name.Length - 4);
+                            if (info.Name.Contains("_1") || info.Name.Contains("_2"))
+                            {
+                                IdentificadorRespuesta = info.Name.Substring(0, info.Name.Length - 6);
+                            }
+                            else
+                            {
+                                IdentificadorRespuesta = info.Name.Substring(0, info.Name.Length - 4);
+                            }
+
+                            
                             var respuestaMetadatosEstado = await clienteSolpheo.MetadatasFileItemAsync(loginSolpheo.AccessToken, int.Parse(JsonConfig.IdFileContainerArchivadorFacturas), int.Parse(IdentificadorRespuesta));
                             idMetadatoArchivadorEstado = int.Parse(JsonConfig.IdMetadataArchivadorFacturasEstado);
                             Estado = respuestaMetadatosEstado.Items.Where(m => m.IdMetadata == idMetadatoArchivadorEstado).FirstOrDefault().StringValue;
@@ -385,7 +397,7 @@ namespace SolucionFacturasLauncher
                                 string LibreFechaAno = "";
                                 string LibreLista = "";
                                 string Fichero = "";
-                                var filenameSalida = RutaAccesoSalidaERP + "\\" + IdentificadorRespuesta + ".XML";
+                                var filenameSalida = RutaAccesoSalidaERP + "\\" + info.Name;
                                 if (File.Exists(filenameSalida))
                                 {
                                     XmlDocument xDoc = new XmlDocument();
@@ -422,7 +434,7 @@ namespace SolucionFacturasLauncher
                                                 log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Rechazada para el IdFileItem " + IdentificadorRespuesta);
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -434,7 +446,7 @@ namespace SolucionFacturasLauncher
                                                 //si ha ido bien, se mueve el XML a una subcarpeta OK
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -506,7 +518,7 @@ namespace SolucionFacturasLauncher
                                                 log.Error("Avanzar Workflow - Error al actualizar la fecharegistrocontable o número de asiento tras recibir XML con resultado contabilización del ERP con idfileitem " + IdentificadorRespuesta);
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -522,7 +534,7 @@ namespace SolucionFacturasLauncher
                                                 log.Error("Avanzar Workflow - Error al avanzar Workflow tras recibir XML con resultado contabilización del ERP para el IdFileItem " + IdentificadorRespuesta);
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_KO\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -534,7 +546,7 @@ namespace SolucionFacturasLauncher
                                                 //si ha ido bien, se mueve el XML a una subcarpeta OK
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"\CONTABILIZACION_PROCESADA_OK\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -553,7 +565,7 @@ namespace SolucionFacturasLauncher
                                                 log.Error("Avanzar Workflow - Error al avanzar Workflow a estado Pago Aprobado para el IdFileItem " + IdentificadorRespuesta);
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGOAPROBADO_PROCESADO_KO\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -565,7 +577,7 @@ namespace SolucionFacturasLauncher
                                                 //si ha ido bien, se mueve el XML a una subcarpeta OK
                                                 string path = filenameSalida;
                                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"PAGOAPROBADO_PROCESADO_OK\";
-                                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                                 if (!Directory.Exists(directoriosalidacopiado))
                                                 {
                                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -575,11 +587,11 @@ namespace SolucionFacturasLauncher
                                         }
                                         else
                                         {
-                                            log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se encuentra ni Contabilizado ni Rechazado");
-                                            filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                                            log.Error("Obtener XML Salida - El estado recibido para documento " + IdentificadorRespuesta + " no es ningun de los posibles (ACEPTADA, RECHAZADA o PAGOAPROBADO)");
+                                            filenameSalida = RutaAccesoSalidaERP + info.Name;
                                             string path = filenameSalida;
                                             string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
-                                            string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                            string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                             if (!Directory.Exists(directoriosalidacopiado))
                                             {
                                                 Directory.CreateDirectory(directoriosalidacopiado);
@@ -590,10 +602,10 @@ namespace SolucionFacturasLauncher
                                     else
                                     {
                                         log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se corresponde con el campo Fichero delntro del XML");
-                                        filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                                        filenameSalida = RutaAccesoSalidaERP + info.Name;
                                         string path = filenameSalida;
                                         string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
-                                        string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                        string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                                         if (!Directory.Exists(directoriosalidacopiado))
                                         {
                                             Directory.CreateDirectory(directoriosalidacopiado);
@@ -605,12 +617,13 @@ namespace SolucionFacturasLauncher
                             }
                             else
                             {
-                                log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " no se encuentra en estado Pendiente Respuesta ERP");
+                                log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + $" no se encuentra en estado '{JsonConfig.EstadoFacturaPendienteContabilizada}' ni en estado '{JsonConfig.EstadoFacturaContabilizadaOK}'");
                                 //si el XML de salida no se encuentra en estado Pendiente Respuesta ERP, se mueve en la subcarpeta XML_FORMATO_INCORRECTO
-                                var filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                                var filenameSalida = RutaAccesoSalidaERP + info.Name;
                                 string path = filenameSalida;
                                 string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
-                                string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                                string ficherosalidacopiado = directoriosalidacopiado + info.Name;
+                                
                                 if (!Directory.Exists(directoriosalidacopiado))
                                 {
                                     Directory.CreateDirectory(directoriosalidacopiado);
@@ -622,10 +635,10 @@ namespace SolucionFacturasLauncher
                         {
                             log.Error("Obtener XML Salida - El documento " + IdentificadorRespuesta + " ha dado el siguiente error: " + ex.Message, ex);
 
-                            var filenameSalida = RutaAccesoSalidaERP + IdentificadorRespuesta + ".XML";
+                            var filenameSalida = RutaAccesoSalidaERP + info.Name;
                             string path = filenameSalida;
                             string directoriosalidacopiado = RutaAccesoSalidaERP + @"XML_FORMATO_INCORRECTO\";
-                            string ficherosalidacopiado = directoriosalidacopiado + IdentificadorRespuesta + ".XML";
+                            string ficherosalidacopiado = directoriosalidacopiado + info.Name;
                             if (!Directory.Exists(directoriosalidacopiado))
                             {
                                 Directory.CreateDirectory(directoriosalidacopiado);
@@ -995,6 +1008,43 @@ namespace SolucionFacturasLauncher
             return resultadoOK;
         }
 
+
+        public async Task<bool> EnviarCorreosBienvenidaInicialesPendientes(string url, string ApiKey)
+        {
+            bool resultadoOK = true;
+
+            log.Information($"EnviarCorreosBienvenidaInicialesPendientes - Inicio Metodo");
+
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("ApiKey", ApiKey);
+
+                    var responseClient = await client.PostAsync(new Uri(url + $"/ePortalProveedores/EnviarCorreosBienvenidaInicialesPendientes"), null);
+                    if (!responseClient.IsSuccessStatusCode)
+                    {
+                        log.Information($"EnviarCorreosBienvenidaInicialesPendientes - Error en llamada al API del portal de proveedores para enviar los correos de bienvenida iniciales");
+                        resultadoOK = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"EnviarCorreosBienvenidaInicialesPendientes - Error en llamada al API del portal de proveedores para enviar los correos de bienvenida iniciales - {ex.Message}");
+                resultadoOK = false;
+            }
+
+            return resultadoOK;
+        }
+
+
+        
+
         public async Task<bool> ActualizarListaSolpheoCodigosObras(string url, string ApiKey)
         {
             bool resultadoOK = true;
@@ -1188,6 +1238,9 @@ namespace SolucionFacturasLauncher
             {
                 await ActualizarListasSolpheoCIFYRazonesSocialesProveedores(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
             }
+
+            await EnviarCorreosBienvenidaInicialesPendientes(JsonConfig.URLAPIPortalProveedores, JsonConfig.ApiKeyAPIPortalProveedores);
+
 
             return true;
         }

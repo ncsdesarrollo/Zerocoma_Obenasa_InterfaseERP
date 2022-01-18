@@ -49,10 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>EDC4C10B0929BF996D66639BA755D000AF734F82</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>560E170613FC464F6959C5D929D72B5416D81666</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SolucionInterfaseSolpheoERPServicio_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SolucionInterfaseSolpheoERPServicio_5_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -119,6 +119,7 @@
     <None Include="SolucionInterfaseSolpheoERPServicio_2_TemporaryKey.pfx" />
     <None Include="SolucionInterfaseSolpheoERPServicio_3_TemporaryKey.pfx" />
     <None Include="SolucionInterfaseSolpheoERPServicio_4_TemporaryKey.pfx" />
+    <None Include="SolucionInterfaseSolpheoERPServicio_5_TemporaryKey.pfx" />
     <None Include="SolucionInterfaseSolpheoERPServicio_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
