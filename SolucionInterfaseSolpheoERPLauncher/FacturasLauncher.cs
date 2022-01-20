@@ -692,7 +692,14 @@ namespace SolucionFacturasLauncher
             TipoAccion.AppendChild(tipoacciontexto);
             fact.AppendChild(TipoAccion);
             XmlElement numfact = doc.CreateElement(string.Empty, "Numero", string.Empty);
-            XmlText tipofact = doc.CreateTextNode(factura.NumeroFactura);
+
+            string numFactAux = factura.NumeroFactura;
+            if (numFactAux.Length > 20)
+            {
+                numFactAux = numFactAux.Substring(numFactAux.Length - 20, 20);
+            }
+
+            XmlText tipofact = doc.CreateTextNode(numFactAux);
             numfact.AppendChild(tipofact);
             fact.AppendChild(numfact);
             XmlElement FechaEmision = doc.CreateElement(string.Empty, "FechaEmision", string.Empty);
