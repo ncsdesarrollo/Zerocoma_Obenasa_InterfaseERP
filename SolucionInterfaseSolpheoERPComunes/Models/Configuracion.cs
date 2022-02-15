@@ -127,7 +127,11 @@ namespace SolucionFacturasComunes.Models
 
         public string IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoRechazada { get; set; }
 
-        public string IdSalidaWorkFlowTareaPendienteContabilizacionERP_ResultadoPagada { get; set; }
+        public string IdSalidaWorkFlowTareaPendienteAprobacionPagoERP_ResultadoPagada { get; set; }
+
+        public string TaskKeyTareaPendienteContabilizacionERP { get; set; }
+
+        public string TaskKeyTareaPendienteAprobacionPagoERP { get; set; }
 
         public string RutaLogs { get; set; }
 
@@ -142,6 +146,8 @@ namespace SolucionFacturasComunes.Models
         public string EstadoFacturaContabilizadaOK { get; set; }
 
         public string EstadoFacturaPendienteEnvioERP { get; set; }
+
+
     }
 
     public class ResultadoSolpheo
@@ -268,6 +274,16 @@ namespace SolucionFacturasComunes.Models
 
         public byte[] FacturaFile { get; set; }
     }
+    
+    public class FacturaObjetoXML
+    {        
+        public string EstadoXML { get; set; }
+        public string LibreFechaDia { get; set; }
+        public string LibreFechaMes { get; set; }
+        public string LibreFechaAno { get; set; }
+        public string LibreLista { get; set; }
+    }
+    
     public class SolpheoMapeoMetadatos
     {
         public int IdMetadato { get; set; }

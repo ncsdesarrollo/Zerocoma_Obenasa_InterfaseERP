@@ -50,6 +50,8 @@ namespace SolucionFacturasComunes.Models
 
     public class WorkflowActivityViewModel
     {
-        public int id { get; set; }
+        public bool Resultado { get; set; }
+        public string Id { get; set; }
+        public string TaskKey { get; set; }
     }
 }

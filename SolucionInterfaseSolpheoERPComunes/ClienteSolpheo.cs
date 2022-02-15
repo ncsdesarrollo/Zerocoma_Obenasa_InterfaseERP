@@ -874,9 +874,9 @@ namespace SolucionFacturasComunes
             return metadatasFileContainer;
         }
 
-        public async Task<ResultadoSolpheo> GetIdWorkFlowAsync(string token, int idFileItem)
+        public async Task<WorkflowActivityViewModel> GetIdWorkFlowAsync(string token, int idFileItem)
         {
-            ResultadoSolpheo SolpheoResult = new ResultadoSolpheo();
+            WorkflowActivityViewModel SolpheoResult = new WorkflowActivityViewModel();
 
             using (HttpClient client = new HttpClient())
             {
@@ -890,20 +890,20 @@ namespace SolucionFacturasComunes
 
                 if (responseClient.IsSuccessStatusCode && data != "null")
                 {
-
-                    var IdActivity = JsonConvert.DeserializeObject<ResultId>(data);
-                    SolpheoResult.Mensaje = IdActivity.Id.ToString();
+                    SolpheoResult = JsonConvert.DeserializeObject<WorkflowActivityViewModel>(data);
                     SolpheoResult.Resultado = true;
                 }
                 else
                 {
-                    SolpheoResult.Mensaje = data;
+                    SolpheoResult.Id = "";
+                    SolpheoResult.TaskKey = "";
                     SolpheoResult.Resultado = false;
                 }
-
             }
+
             return SolpheoResult;
         }
+
 
         public async Task<ResultadoSolpheo> ReemplazarDocumento(string token, int idFileItem, byte[] file, string nameFile)
         {
@@ -961,7 +961,7 @@ namespace SolucionFacturasComunes
                 {
                     json = "{\"idWorkflowActivity\":" + idWorkflowActivity + ",\"resultKey\":" + idKey + ",\"notCheckRequiredVariables\":false,\"replaceFile\":false}";
                 }
-                
+
 
                 var responseClient = await client.PostAsync($"{this._urlTenant + ""}" + "api/workflowactivity/", new StringContent(json, Encoding.UTF8, "application/json"));
 
